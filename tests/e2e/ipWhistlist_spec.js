@@ -14,7 +14,7 @@ describe("ipWhitelist directive configuration", function () {
 
 	beforeEach(function () {
 		return helpers.startApplication({
-			args: ["js/electron.js"]
+			args: ["src/electron.src"]
 		}).then(function (startedApp) { app = startedApp; });
 	});
 
@@ -25,7 +25,7 @@ describe("ipWhitelist directive configuration", function () {
 	describe("Set ipWhitelist without access", function () {
 		before(function () {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/noIpWhiteList.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/noIpWhiteList.src";
 		});
 		it("should return 403", function (done) {
 			request.get("http://localhost:8080", function (err, res, body) {
@@ -38,7 +38,7 @@ describe("ipWhitelist directive configuration", function () {
 	describe("Set ipWhitelist []", function () {
 		before(function () {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/empty_ipWhiteList.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/empty_ipWhiteList.src";
 		});
 		it("should return 200", function (done) {
 			request.get("http://localhost:8080", function (err, res, body) {

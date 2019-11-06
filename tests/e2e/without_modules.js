@@ -12,7 +12,7 @@ describe("Check configuration without modules", function () {
 
 	beforeEach(function () {
 		return helpers.startApplication({
-			args: ["js/electron.js"]
+			args: ["src/electron.src"]
 		}).then(function (startedApp) { app = startedApp; });
 	});
 
@@ -22,7 +22,7 @@ describe("Check configuration without modules", function () {
 
 	before(function () {
 		// Set config sample for use in test
-		process.env.MM_CONFIG_FILE = "tests/configs/without_modules.js";
+		process.env.MM_CONFIG_FILE = "tests/configs/without_modules.src";
 	});
 
 	it("Show the message MagicMirror title", function () {

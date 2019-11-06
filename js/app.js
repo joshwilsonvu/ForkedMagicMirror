@@ -6,9 +6,9 @@
  */
 
 var fs = require("fs");
-var Server = require(__dirname + "/server.js");
-var Utils = require(__dirname + "/utils.js");
-var defaultModules = require(__dirname + "/../modules/default/defaultmodules.js");
+var Server = require(__dirname + "/server.src");
+var Utils = require(__dirname + "/utils.src");
+var defaultModules = require(__dirname + "/../modules/default/defaultmodules.src");
 var path = require("path");
 
 // Get version number.
@@ -50,11 +50,11 @@ var App = function() {
 	 */
 	var loadConfig = function(callback) {
 		console.log("Loading config ...");
-		var defaults = require(__dirname + "/defaults.js");
+		var defaults = require(__dirname + "/defaults.src");
 
 		// For this check proposed to TestSuite
 		// https://forum.magicmirror.builders/topic/1456/test-suite-for-magicmirror/8
-		var configFilename = path.resolve(global.root_path + "/config/config.js");
+		var configFilename = path.resolve(global.root_path + "/config/config.src");
 		if (typeof(global.configuration_file) !== "undefined") {
 		    configFilename = path.resolve(global.configuration_file);
 		}
@@ -78,7 +78,7 @@ var App = function() {
 	};
 
 	var checkDeprecatedOptions = function(userConfig) {
-		var deprecated = require(global.root_path + "/js/deprecated.js");
+		var deprecated = require(global.root_path + "/src/deprecated.src");
 		var deprecatedOptions = deprecated.configs;
 
 		var usedDeprecated = [];
@@ -112,7 +112,7 @@ var App = function() {
 			moduleFolder =  __dirname + "/../modules/default/" + module;
 		}
 
-		var helperPath = moduleFolder + "/node_helper.js";
+		var helperPath = moduleFolder + "/node_helper.src";
 
 		var loadModule = true;
 		try {
@@ -253,7 +253,7 @@ var App = function() {
 	 *
 	 * Added to fix #1056
 	 * Note: this is only used if running `server-only`. Otherwise
-	 * this.stop() is called by app.on("before-quit"... in `electron.js`
+	 * this.stop() is called by app.on("before-quit"... in `electron.src`
 	 */
 	process.on("SIGINT", () => {
 		console.log("[SIGINT] Received. Shutting down server...");

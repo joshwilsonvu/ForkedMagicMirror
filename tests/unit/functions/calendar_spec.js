@@ -2,9 +2,9 @@ const expect = require("chai").expect;
 
 global.moment = require("moment");
 
-describe("Functions into modules/default/calendar/calendar.js", function() {
+describe("Functions into modules/default/calendar/calendar.src", function() {
 
-	// Fake for use by calendar.js
+	// Fake for use by calendar.src
 	Module = {};
 	Module.definitions = {};
 	Module.register = function (name, moduleDefinition) {
@@ -12,7 +12,7 @@ describe("Functions into modules/default/calendar/calendar.js", function() {
 	};
 
 	before(function() {
-		// load calendar.js
+		// load calendar.src
 		require("../../../modules/default/calendar/calendar.js");
 	});
 

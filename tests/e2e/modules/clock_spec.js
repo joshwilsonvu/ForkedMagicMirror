@@ -13,7 +13,7 @@ describe("Clock module", function() {
 	beforeEach(function() {
 		return helpers
 			.startApplication({
-				args: ["js/electron.js"]
+				args: ["src/electron.src"]
 			})
 			.then(function(startedApp) {
 				app = startedApp;
@@ -27,7 +27,7 @@ describe("Clock module", function() {
 	describe("with default 24hr clock config", function() {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_24hr.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_24hr.src";
 		});
 
 		it("shows date with correct format", function() {
@@ -44,7 +44,7 @@ describe("Clock module", function() {
 	describe("with default 12hr clock config", function() {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_12hr.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_12hr.src";
 		});
 
 		it("shows date with correct format", function() {
@@ -61,7 +61,7 @@ describe("Clock module", function() {
 	describe("with showPeriodUpper config enabled", function() {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_showPeriodUpper.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_showPeriodUpper.src";
 		});
 
 		it("shows 12hr time with upper case AM/PM", function() {
@@ -73,7 +73,7 @@ describe("Clock module", function() {
 	describe("with displaySeconds config disabled", function() {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_displaySeconds_false.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_displaySeconds_false.src";
 		});
 
 		it("shows 12hr time without seconds am/pm", function() {
@@ -85,7 +85,7 @@ describe("Clock module", function() {
 	describe("with showWeek config enabled", function() {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_showWeek.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/clock/clock_showWeek.src";
 		});
 
 		it("shows week with correct format", function() {

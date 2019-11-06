@@ -1,6 +1,6 @@
 var expect = require("chai").expect;
 
-describe("Functions into modules/default/newsfeed/newsfeed.js", function() {
+describe("Functions into modules/default/newsfeed/newsfeed.src", function() {
 
 	Module = {};
 	Module.definitions = {};
@@ -8,7 +8,7 @@ describe("Functions into modules/default/newsfeed/newsfeed.js", function() {
 		Module.definitions[name] = moduleDefinition;
 	};
 
-	// load newsfeed.js
+	// load newsfeed.src
 	require("../../../modules/default/newsfeed/newsfeed.js");
 
 	describe("capitalizeFirstLetter", function() {

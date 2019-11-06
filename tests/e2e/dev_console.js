@@ -16,14 +16,14 @@ describe("Development console tests", function() {
 
 	before(function() {
 		// Set config sample for use in test
-		process.env.MM_CONFIG_FILE = "tests/configs/env.js";
+		process.env.MM_CONFIG_FILE = "tests/configs/env.src";
 	});
 
 	describe("Without 'dev' commandline argument", function() {
 		before(function() {
 			return helpers
 				.startApplication({
-					args: ["js/electron.js"]
+					args: ["src/electron.src"]
 				})
 				.then(function(startedApp) {
 					app = startedApp;
@@ -43,7 +43,7 @@ describe("Development console tests", function() {
 		before(function() {
 			return helpers
 				.startApplication({
-					args: ["js/electron.js", "dev"]
+					args: ["src/electron.src", "dev"]
 				})
 				.then(function(startedApp) {
 					app = startedApp;

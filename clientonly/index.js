@@ -72,7 +72,7 @@
 
 				// Spawn electron application
 				const electron = require("electron");
-				const child = require("child_process").spawn(electron, ["js/electron.js"], options);
+				const child = require("child_process").spawn(electron, ["src/electron.src"], options);
 
 				// Pipe all child process output to current stdout
 				child.stdout.on("data", function (buf) {

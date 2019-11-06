@@ -17,7 +17,7 @@ describe("Weather module", function() {
 
 	async function setup(responses) {
 		app = await helpers.startApplication({
-			args: ["js/electron.js"]
+			args: ["src/electron.src"]
 		});
 
 		wdajaxstub.init(app.client, responses);
@@ -38,7 +38,7 @@ describe("Weather module", function() {
 
 		describe("Default configuration", function() {
 			before(function() {
-				process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/currentweather_default.js";
+				process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/currentweather_default.src";
 			});
 
 			it("should render wind speed and wind direction", async function() {
@@ -91,7 +91,7 @@ describe("Weather module", function() {
 
 		describe("Configuration Options", function() {
 			before(function() {
-				process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/currentweather_options.js";
+				process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/currentweather_options.src";
 			});
 
 			it("should render useBeaufort = false", async function() {
@@ -131,7 +131,7 @@ describe("Weather module", function() {
 
 		describe("Current weather units", function() {
 			before(function() {
-				process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/currentweather_units.js";
+				process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/currentweather_units.src";
 			});
 
 			it("should render imperial units", async function() {
@@ -181,7 +181,7 @@ describe("Weather module", function() {
 
         describe("Default configuration", function() {
             before(function() {
-                process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/forecastweather_default.js";
+                process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/forecastweather_default.src";
             });
 
             it("should render days", async function() {
@@ -245,7 +245,7 @@ describe("Weather module", function() {
 
         describe("Configuration Options", function() {
             before(function() {
-                process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/forecastweather_options.js";
+                process.env.MM_CONFIG_FILE = "tests/configs/modules/weather/forecastweather_options.src";
             });
 
             it("should render custom table class", async function() {

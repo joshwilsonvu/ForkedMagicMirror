@@ -1,9 +1,9 @@
 /* jshint esversion: 6 */
 
-"use strict";
+
 
 const electron = require("electron");
-const core = require(__dirname + "/app.js");
+const core = require(__dirname + "/app.src");
 
 // Config
 var config = process.env.config ? JSON.parse(process.env.config) : {};
@@ -101,7 +101,7 @@ app.on("activate", function() {
  * each node_helper's stop function if it exists. Added to fix #1056
  *
  * Note: this is only used if running Electron. Otherwise
- * core.stop() is called by process.on("SIGINT"... in `app.js`
+ * core.stop() is called by process.on("SIGINT"... in `app.src`
  */
 app.on("before-quit", (event) => {
 	console.log("Shutting down server...");

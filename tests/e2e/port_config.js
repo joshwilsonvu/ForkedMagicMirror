@@ -14,7 +14,7 @@ describe("port directive configuration", function () {
 
 	beforeEach(function () {
 		return helpers.startApplication({
-			args: ["js/electron.js"]
+			args: ["src/electron.src"]
 		}).then(function (startedApp) { app = startedApp; });
 	});
 
@@ -25,7 +25,7 @@ describe("port directive configuration", function () {
 	describe("Set port 8090", function () {
 		before(function () {
 			// Set config sample for use in this test
-			process.env.MM_CONFIG_FILE = "tests/configs/port_8090.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/port_8090.src";
 		});
 
 		it("should return 200", function (done) {
@@ -40,7 +40,7 @@ describe("port directive configuration", function () {
 		before(function () {
 			process.env.MM_PORT = 8100;
 			// Set config sample for use in this test
-			process.env.MM_CONFIG_FILE = "tests/configs/port_8090.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/port_8090.src";
 		});
 
 		after(function () {

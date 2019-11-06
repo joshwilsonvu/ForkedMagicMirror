@@ -13,7 +13,7 @@ describe("Test helloworld module", function() {
 	beforeEach(function() {
 		return helpers
 			.startApplication({
-				args: ["js/electron.js"]
+				args: ["src/electron.src"]
 			})
 			.then(function(startedApp) {
 				app = startedApp;
@@ -27,7 +27,7 @@ describe("Test helloworld module", function() {
 	describe("helloworld set config text", function () {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/helloworld/helloworld.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/helloworld/helloworld.src";
 		});
 
 		it("Test message helloworld module", function () {
@@ -39,7 +39,7 @@ describe("Test helloworld module", function() {
 	describe("helloworld default config text", function () {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/helloworld/helloworld_default.js";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/helloworld/helloworld_default.src";
 		});
 
 		it("Test message helloworld module", function () {

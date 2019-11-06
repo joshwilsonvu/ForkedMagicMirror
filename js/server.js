@@ -13,7 +13,7 @@ var path = require("path");
 var ipfilter = require("express-ipfilter").IpFilter;
 var fs = require("fs");
 var helmet = require("helmet");
-var Utils = require(__dirname + "/utils.js");
+var Utils = require(__dirname + "/utils.src");
 
 var Server = function(config, callback) {
 
@@ -36,12 +36,12 @@ var Server = function(config, callback) {
 				return next();
 			}
 			console.log(err.message);
-			res.status(403).send("This device is not allowed to access your mirror. <br> Please check your config.js or config.js.sample to change this.");
+			res.status(403).send("This device is not allowed to access your mirror. <br> Please check your config.src or config.src.sample to change this.");
 		});
 	});
 	app.use(helmet());
 
-	app.use("/js", express.static(__dirname));
+	app.use("/src", express.static(__dirname));
 	var directories = ["/config", "/css", "/fonts", "/modules", "/vendor", "/translations", "/tests/configs"];
 	var directory;
 	for (var i in directories) {
@@ -61,7 +61,7 @@ var Server = function(config, callback) {
 		var html = fs.readFileSync(path.resolve(global.root_path + "/index.html"), {encoding: "utf8"});
 		html = html.replace("#VERSION#", global.version);
 
-		configFile = "config/config.js";
+		configFile = "config/config.src";
 		if (typeof(global.configuration_file) !== "undefined") {
 		    configFile = global.configuration_file;
 		}

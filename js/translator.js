@@ -212,7 +212,7 @@ var Translator = (function() {
 
 		/* loadCoreTranslationsFallback()
 		 * Load the core translations fallback.
-		 * The first language defined in translations.js will be used.
+		 * The first language defined in translations.src will be used.
 		 */
 		loadCoreTranslationsFallback: function() {
 			var self = this;

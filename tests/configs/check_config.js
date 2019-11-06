@@ -12,7 +12,7 @@
 var v = require("jshint");
 var path = require("path");
 var fs = require("fs");
-var Utils = require(__dirname + "/../../js/utils.js");
+var Utils = require(__dirname + "/../../src/utils.src");
 
 /* getConfigFile()
  * Return string with path of configuration file
@@ -21,7 +21,7 @@ var Utils = require(__dirname + "/../../js/utils.js");
 function getConfigFile() {
 	// FIXME: This function should be in core. Do you want refactor me ;) ?, be good!
 	rootPath = path.resolve(__dirname + "/../../");
-	var configFileName = path.resolve(rootPath + "/config/config.js");
+	var configFileName = path.resolve(rootPath + "/config/config.src");
 	if (process.env.MM_CONFIG_FILE) {
 		configFileName = path.resolve(process.env.MM_CONFIG_FILE);
 	}

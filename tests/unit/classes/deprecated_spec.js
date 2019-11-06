@@ -1,5 +1,5 @@
 const expect = require("chai").expect;
-const deprecated = require("../../../js/deprecated");
+const deprecated = require("../../../src/deprecated");
 
 describe("Deprecated", function() {
 	it("should be an object", function() {

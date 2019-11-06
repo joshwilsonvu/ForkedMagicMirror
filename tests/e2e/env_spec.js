@@ -14,13 +14,13 @@ describe("Electron app environment", function() {
 
 	before(function() {
 		// Set config sample for use in test
-		process.env.MM_CONFIG_FILE = "tests/configs/env.js";
+		process.env.MM_CONFIG_FILE = "tests/configs/env.src";
 	});
 
 	beforeEach(function() {
 		return helpers
 			.startApplication({
-				args: ["js/electron.js"]
+				args: ["src/electron.src"]
 			})
 			.then(function(startedApp) {
 				app = startedApp;

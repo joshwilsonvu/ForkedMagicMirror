@@ -7,12 +7,12 @@
  * MIT Licensed.
  */
 
-var port = 8080;
-var address = "localhost";
+let port = 8080;
+const address = "localhost";
 if (typeof(mmPort) !== "undefined") {
 	port = mmPort;
 }
-var defaults = {
+export default {
 	address: address,
 	port: port,
 	kioskmode: false,

@@ -18,19 +18,19 @@ echo '                       \$$$$$$  |'
 echo '                        \______/'
 echo -e "\e[0m"
 
-# Define the tested version of Node.js.
+# Define the tested version of Node.src.
 NODE_TESTED="v5.1.0"
 NPM_TESTED="V6.0.0"
 USER=`whoami`
 PM2_FILE=~/MagicMirror/installers/pm2_MagicMirror.json
 
 # Determine which Pi is running.
-ARM=$(uname -m) 
+ARM=$(uname -m)
 
 # Check the Raspberry Pi version.
 if [ "$ARM" != "armv7l" ]; then
-  read -p "this appears not to be a Raspberry Pi 2 or 3, do you want to continue installtion (y/N)?" choice 
-	if [[ $choice =~ ^[Nn]$ ]]; then 
+  read -p "this appears not to be a Raspberry Pi 2 or 3, do you want to continue installtion (y/N)?" choice
+	if [[ $choice =~ ^[Nn]$ ]]; then
 		echo -e "\e[91mSorry, your Raspberry Pi is not supported."
 		echo -e "\e[91mPlease run MagicMirror on a Raspberry Pi 2 or 3."
 		echo -e "\e[91mIf this is a Pi Zero, you are in the same boat as the original Raspberry Pi. You must run in server only mode."
@@ -38,7 +38,7 @@ if [ "$ARM" != "armv7l" ]; then
 	fi
 fi
 
-    
+
 # Define helper methods.
 function command_exists () { type "$1" &> /dev/null ;}
 function verlte() {  [ "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ];}
@@ -52,7 +52,7 @@ sudo apt-get update || echo -e "\e[91mUpdate failed, carrying on installation ..
 echo -e "\e[96mInstalling helper tools ...\e[90m"
 sudo apt-get --assume-yes install curl wget git build-essential unzip || exit
 
-# Check if we need to install or upgrade Node.js.
+# Check if we need to install or upgrade Node.src.
 echo -e "\e[96mCheck current Node installation ...\e[0m"
 NODE_INSTALL=false
 if command_exists node; then
@@ -83,13 +83,13 @@ fi
 
 # Install or upgrade node if necessary.
 if $NODE_INSTALL; then
-	
+
 	echo -e "\e[96mInstalling Node.js ...\e[90m"
 
-	# Fetch the latest version of Node.js from the selected branch
+	# Fetch the latest version of Node.src from the selected branch
 	# The NODE_STABLE_BRANCH variable will need to be manually adjusted when a new branch is released. (e.g. 7.x)
 	# Only tested (stable) versions are recommended as newer versions could break MagicMirror.
-	
+
 	NODE_STABLE_BRANCH="10.x"
  	curl -sL https://deb.nodesource.com/setup_$NODE_STABLE_BRANCH | sudo -E bash -
  	sudo apt-get install -y nodejs
@@ -127,7 +127,7 @@ fi
 
 # Install or upgrade node if necessary.
 if $NPM_INSTALL; then
-	
+
 	echo -e "\e[96mInstalling npm ...\e[90m"
 
   sudo apt-get install -y npm
@@ -147,7 +147,7 @@ if [ -d "$HOME/MagicMirror" ] ; then
 fi
 
 echo -e "\e[96mCloning MagicMirror ...\e[90m"
-if git clone --depth=1 https://github.com/MichMich/MagicMirror.git; then 
+if git clone --depth=1 https://github.com/MichMich/MagicMirror.git; then
 	echo -e "\e[92mCloning MagicMirror Done!\e[0m"
 else
 	echo -e "\e[91mUnable to clone MagicMirror."
@@ -156,7 +156,7 @@ fi
 
 cd ~/MagicMirror  || exit
 echo -e "\e[96mInstalling dependencies ...\e[90m"
-if npm install; then 
+if npm install; then
 	echo -e "\e[92mDependencies installation Done!\e[0m"
 else
 	echo -e "\e[91mUnable to install dependencies!"
@@ -164,7 +164,7 @@ else
 fi
 
 # Use sample config for start MagicMirror
-cp config/config.js.sample config/config.js
+cp config/config.src.sample config/config.src
 
 # Check if plymouth is installed (default with PIXEL desktop environment), then install custom splashscreen.
 echo -e "\e[96mCheck plymouth installation ...\e[0m"
@@ -202,7 +202,7 @@ if [[ $choice =~ ^[Yy]$ ]]; then
     #
     mac=$(uname -s)
     up=""
-    if [ $mac == 'Darwin' ]; then 
+    if [ $mac == 'Darwin' ]; then
        up="--unsafe-perm"
     fi
     sudo npm install $up -g pm2
@@ -211,12 +211,12 @@ if [[ $choice =~ ^[Yy]$ ]]; then
 	else
 		sudo su -c "env PATH=$PATH:/usr/bin pm2 startup linux -u $USER --hp /home/$USER"
 	fi
-  if [ "USER"  != "pi" ]; then 
+  if [ "USER"  != "pi" ]; then
 		sed 's/pi/'$USER'/g' mm.sh >mm.sh
     sed 's/pi/'$USER'/g' $PM2_FILE > ~/MagicMirror/installers/pm2_MagicMirror_new.json
     PM2_FILE=~/MagicMirror/installers/pm2_MagicMirror_new.json
   fi
-	pm2 start $PM2_FILE 
+	pm2 start $PM2_FILE
 	pm2 save
 fi
 # Disable Screensaver

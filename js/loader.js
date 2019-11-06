@@ -175,7 +175,7 @@ var Loader = (function() {
 		var extension =  fileName.slice((Math.max(0, fileName.lastIndexOf(".")) || Infinity) + 1);
 
 		switch (extension.toLowerCase()) {
-		case "js":
+		case "src":
 			Log.log("Load script: " + fileName);
 			var script = document.createElement("script");
 			script.type = "text/javascript";

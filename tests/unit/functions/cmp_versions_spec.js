@@ -2,12 +2,12 @@ const expect = require("chai").expect;
 const path = require("path");
 const {JSDOM} = require("jsdom");
 
-describe("Test function cmpVersions in js/module.js", function() {
+describe("Test function cmpVersions in src/module.src", function() {
 	let cmp;
 
 	before(function(done) {
 		const dom = new JSDOM(`<script>var Class = {extend: function() { return {}; }};</script>\
-				<script src="${path.join(__dirname, "..", "..", "..", "js", "module.js")}">`, { runScripts: "dangerously",
+				<script src="${path.join(__dirname, "..", "..", "..", "src", "module.src")}">`, { runScripts: "dangerously",
 			resources: "usable" });
 		dom.window.onload = function() {
 			const {cmpVersions} = dom.window;

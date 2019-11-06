@@ -2,14 +2,14 @@ const expect = require("chai").expect;
 const path = require("path");
 const {JSDOM} = require("jsdom");
 
-describe("File js/class", function() {
+describe("File src/class", function() {
 	describe("Test function cloneObject", function() {
 		let clone;
 		let dom;
 
 		before(function(done) {
 			dom = new JSDOM(`<script>var Log = {log: function() {}};</script>\
-					<script src="${path.join(__dirname, "..", "..", "..", "js", "class.js")}">`, { runScripts: "dangerously",
+					<script src="${path.join(__dirname, "..", "..", "..", "src", "class.src")}">`, { runScripts: "dangerously",
 				resources: "usable" });
 			dom.window.onload = function() {
 				const {cloneObject} = dom.window;
