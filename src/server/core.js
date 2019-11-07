@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 //import Server from "./server";
 import util from "./utils";
-import defaultModules from "./modules/default/defaultmodules";
-import config from "./config";
+import defaultModules from "../../modules/default/defaultmodules";
+import config from "../shared/config";
 
 // The next part is here to prevent a major exception when there
 // is no internet connection. This could probable be solved better.

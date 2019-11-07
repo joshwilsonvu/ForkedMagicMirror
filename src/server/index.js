@@ -1,14 +1,21 @@
+/*
+ * This file is a bare-bones shell for the client to run
+ */
+
 import electron from "electron";
-import config from "./config";
+import config from "../shared/config";
 import core from "./core";
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = electron;
+const {app, BrowserWindow, Menu, MenuItem} = electron;
 
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 function createWindow() {
+    if (mainWindow) {
+        return;
+    }
     // Create the browser window.
     mainWindow = new BrowserWindow({
         fullscreen: true,
@@ -18,6 +25,7 @@ function createWindow() {
         x: 0,
         y: 0,
         darkTheme: true,
+        titleBarStyle: "hidden",
         webPreferences: {
             zoomFactor: config.zoom
         },
@@ -25,6 +33,9 @@ function createWindow() {
         ...config.electronOptions
     });
 
+    if (process.env.NODE_ENV === "production") {
+        mainWindow.loadFile(config.root_path)
+    }
     // and load the index.html of the app.
     mainWindow.loadURL('http://localhost:3000');
 
@@ -32,11 +43,11 @@ function createWindow() {
     // mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
-    mainWindow.on('closed', function () {
+    mainWindow.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        mainWindow = null
+        mainWindow = null;
     });
 }
 
@@ -61,6 +72,9 @@ app.on('activate', function () {
 app.on("before-quit", event => {
     event.preventDefault();
     setTimeout(() => process.exit(0), 3000);
-    core.stop();
-    process.exit(0);
+    try {
+        core.stop();
+    } finally {
+        process.exit(0);
+    }
 });

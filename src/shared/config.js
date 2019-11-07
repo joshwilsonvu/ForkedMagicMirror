@@ -1,7 +1,10 @@
 import path from "path";
+import utils from "../server/utils";
+import defaults from "../client/defaults";
+
+// Import the user's configuration at compile time.
+// To use a different file, fill config.js with `module.exports = require("path/to/configuration/file")`
 import userConfig from "./userconfig/config";
-import utils from "./utils";
-import defaults from "./defaults";
 
 // Warn about deprecated options
 const deprecatedOptions = ["kioskmode"];

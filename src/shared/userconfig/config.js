@@ -26,7 +26,10 @@ export default {
 	units: "metric",
 
 	modules: [
-		{
+	  {
+	    module: "helloworld"
+	  }
+		/*{
 			module: "alert",
 		},
 		{
@@ -87,8 +90,7 @@ export default {
 				broadcastNewsFeeds: true,
 				broadcastNewsUpdates: true
 			}
-		},
+		},*/
 	]
 
 };
-

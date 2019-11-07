@@ -36,7 +36,7 @@ Use the request library to fetch the specified URL (```opts``` gets passed on to
 ```javascript
 'use strict';
 
-const ical = require('ical');
+const ical = require('modules/default/calendar/vendor/ical.js/ical');
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 ical.fromURL('http://lanyrd.com/topics/nodejs/nodejs.ics', {}, function (err, data) {

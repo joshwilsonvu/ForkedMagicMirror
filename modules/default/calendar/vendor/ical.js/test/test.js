@@ -4,7 +4,7 @@
  *
  ***/
 process.env.TZ = 'America/San_Francisco';
-var ical = require('../index')
+var ical = require('../../../../../../../../modules/default/calendar/vendor/ical.js')
 
 var vows = require('vows')
   , assert = require('assert')
