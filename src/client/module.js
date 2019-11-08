@@ -1,13 +1,11 @@
+/**
+ * This Module class is provided only for backwards compatibility with
+ * existing MagicMirror plugins. These plugins will subclass this class,
+ * and the resulting instance will be wrapped in a React component.
+ */
+
 import {Environment, WebLoader} from "nunjucks";
-
-const isReact = source => {
-  source.match(/[`'"]react[`'"]/);
-};
-
-const evalModule = (path, Module = ModuleCompat) => {
-  //const url = import(`${path}`)
-  //return (new Function(source))(Module); // Evaluate with Module global
-};
+import path from "path";
 
 const nunjucksMap = new WeakMap();
 const getNunjucksEnvironment = module => {
@@ -25,7 +23,7 @@ const getNunjucksEnvironment = module => {
 };
 
 const socketMap = new WeakMap();
-const getSocket = module => {
+/*const getSocket = module => {
   let socket = socketMap.get(module);
   if (!socket) {
     socket = new MMSocket(module.name);
@@ -33,9 +31,9 @@ const getSocket = module => {
     socketMap.set(module, socket);
   }
   return socket;
-};
+};*/
 
-class ModuleCompat {
+export default class Module {
   constructor(data) {
 	this.data = data;
 	this.name = data.name || "";
@@ -152,9 +150,9 @@ class ModuleCompat {
 
   // Returns a socket object. If it doesn't exist, it's created.
   // It also registers the notification callback.
-  socket() {
-    return getSocket(this);
-  }
+  // socket() {
+  //   return getSocket(this);
+  // }
 
   // Retrieve the path to a module file.
   file(file) {
@@ -173,6 +171,12 @@ class ModuleCompat {
 
   loadDependencies(funcName, cb) {
     let dependencies = this[funcName]();
-    Promise.all(dependencies.map())
+    cb();
+    //Promise.all(dependencies.map(dep => Loader.loadFile(dep, this, () => {}))).then(cb);
   }
 }
+
+const evalModule = (path, Module = Module) => {
+  //const url = import(`${path}`)
+  //return (new Function(source))(Module); // Evaluate with Module global
+};

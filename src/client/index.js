@@ -1,18 +1,32 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import MM from "./components/mm";
-import config from "../shared/config";
+import MM from "./components/magic-mirror";
+import Module from "./module";
 // make CSS globally available
 import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "roboto-fontface/css/roboto-condensed/roboto-condensed-fontface.css";
 import "./css/main.css";
 
-let modules;
-config.modules.forEach(m => {
+let modules = [
+  new (class extends Module {
+	getDom() {
+	  console.log("Getting dom");
+	  let div = document.createElement("div");
+	  div.append("It's fuckin happening!!!");
+	  return div;
+	}
+  })({
+	position: "middle_center",
+	name: "test",
+	identifier: "test-1",
+	config: {foo: 2}
+  })
+];
+/*config.modules.forEach(m => {
 
-});
+});*/
 
-const MM = {
+/*const MM = {
   updateDom(module, speed) {
 	if (!(module instanceof Module)) {
 	  Log.error("updateDom: Sender should be a module.");
@@ -20,5 +34,5 @@ const MM = {
 	}
 
   }
-};
-ReactDOM.render(<MM modules={config.modules}/>, document.getElementById("root"));
+};*/
+ReactDOM.render(<MM modules={modules}/>, document.getElementById("root"));

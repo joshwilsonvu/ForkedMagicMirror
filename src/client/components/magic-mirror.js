@@ -1,7 +1,12 @@
-import React, {useMemo} from "react";
-import Module from "./module";
+/**
+ * This component implements the MagicMirror
+ */
 
-const defaultRegions = {
+import React, {useMemo, useReducer} from "react";
+import Module from "./module";
+import dirs from "../loader";
+
+const getDefaultRegions = () => ({
   "top_bar": [],
   "top_left": [],
   "top_center": [],
@@ -15,18 +20,33 @@ const defaultRegions = {
   "bottom_bar": [],
   "fullscreen_above": [],
   "fullscreen_below": []
+});
+
+export const MMContext = React.createContext(null);
+const MMReducer = (modules = [], {type, ...payload}) => {
+  switch(type) {
+  case "load":
+
+    return modules;
+  default:
+    return modules;
+  }
 };
 
-const MM = ({modules = []}) => {
+const MagicMirror = () => {
+  const [modules, dispatch] = useReducer(MMReducer, []);
+  // Divide modules into the various regions by their .data.position property
   const regions = useMemo(() => modules.reduce((regions, m) => {
 	let pos = m.data.position;
 	if (regions.hasOwnProperty(pos)) {
 	  regions[pos].push(<Module module={m}/>);
 	}
 	return regions;
-  }, defaultRegions), [modules]);
+  }, getDefaultRegions()), [modules]);
+  // Expose a backwards-compatible MM instance that can
+  const MM = {}; // TODO
   return (
-	<>
+	<MMContext.Provider value={MM}>
 	  <div className="region fullscreen below">
 		<div className="container">{regions.fullscreen_below}</div>
 	  </div>
@@ -66,8 +86,8 @@ const MM = ({modules = []}) => {
 	  <div className="region fullscreen above">
 		<div className="container">{regions.fullscreen_above}</div>
 	  </div>
-	</>
+	</MMContext.Provider>
   );
 };
 
-export default MM;
+export default MagicMirror;

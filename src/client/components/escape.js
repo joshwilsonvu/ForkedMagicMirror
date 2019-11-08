@@ -1,21 +1,39 @@
 import React, { useRef, useEffect, useReducer, useImperativeHandle, forwardRef } from "react";
 
-const useForceUpdate = () => useReducer(x => x + 1, 0)[1];
+// Call forceUpdate() on a ref to this component to rerender
+const useForceUpdate = ref => {
+  const [updated, forceUpdate] = useReducer(x => x + 1, 0);
+  useImperativeHandle(ref, () => ({ forceUpdate }), []);
+  return updated;
+};
 
 // An escape hatch from React. Uses the getDom prop to imperatively add HTMLElements.
-// Call forceUpdate() on a ref to this component to call getDom again, or change the getDom prop.
-const Escape = forwardRef(({getDom}, ref) => {
-  const forceUpdate = useForceUpdate();
-  useImperativeHandle(ref, () => ({ forceUpdate }), []);
+const Escape = forwardRef(({getDom, className}, ref) => {
+  const updated = useForceUpdate(ref);
+
+  const div = useRef(null);
+  console.log("unconditional render");
   useEffect(() => {
     let abort = false;
-    getDom.then(dom => {
+    Promise.resolve(getDom(div.current.firstChild)).then((newDom = null) => {
+      const oldDom = div.current.firstChild;
       if (!abort) {
-        ref.current.replaceChild(dom, ref.current.firstChild);
+        console.log(newDom, oldDom);
+        if (newDom && oldDom) {
+          div.current.replaceChild(newDom, div.current.firstChild);
+          console.log("Rendered escaped content");
+        } else if (newDom && !oldDom) {
+          div.current.appendChild(newDom);
+          console.log("Rendered new escaped content");
+        } else if (!newDom && oldDom) {
+          div.current.removeChild(oldDom);
+        } // else do nothing
 	  }
 	});
     return () => { abort = true; }
-  });
-  useEffect(() => () => ref.current.removeChild(ref.current.firstChild), []);
-  return <div ref={ref} />;
+  }, [updated, getDom]);
+  useEffect(() => () => div.current.removeChild(div.current.firstChild), []);
+  return <div ref={div} className={className}/>;
 });
+
+export default Escape;
