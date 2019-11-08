@@ -16,9 +16,9 @@ describe("Position of modules", function () {
 
 		before(function () {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/positions.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/positions.js";
 			return helpers.startApplication({
-				args: ["src/electron.src"]
+				args: ["src/electron.js"]
 			}).then(function (startedApp) { app = startedApp; });
 		});
 

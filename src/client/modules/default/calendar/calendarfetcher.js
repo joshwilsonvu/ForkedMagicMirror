@@ -28,7 +28,7 @@ var CalendarFetcher = function(url, reloadInterval, excludedEvents, maximumEntri
 		nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
 		var opts = {
 			headers: {
-				"User-Agent": "Mozilla/5.0 (Node.src "+ nodeVersion + ") MagicMirror/"  + global.version +  " (https://github.com/MichMich/MagicMirror/)"
+				"User-Agent": "Mozilla/5.0 (Node.js "+ nodeVersion + ") MagicMirror/"  + global.version +  " (https://github.com/MichMich/MagicMirror/)"
 			},
 			gzip: true
 		};
@@ -212,7 +212,7 @@ var CalendarFetcher = function(url, reloadInterval, excludedEvents, maximumEntri
 						// Loop through the set of date entries to see which recurrences should be added to our event list.
 						for (var d in dates) {
 							var date = dates[d];
-							// ical.src started returning recurrences and exdates as ISOStrings without time information.
+							// ical.js started returning recurrences and exdates as ISOStrings without time information.
 							// .toISOString().substring(0,10) is the method they use to calculate keys, so we'll do the same
 							// (see https://github.com/peterbraden/ical.js/pull/84 )
 							var dateKey = date.toISOString().substring(0,10);

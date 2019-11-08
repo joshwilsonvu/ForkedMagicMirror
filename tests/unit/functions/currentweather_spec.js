@@ -2,7 +2,7 @@ var expect = require("chai").expect;
 
 describe("Functions module currentweather", function() {
 
-	// Fake for use by currentweather.src
+	// Fake for use by currentweather.js
 	Module = {};
 	config = {};
 	Module.definitions = {};

@@ -6,7 +6,7 @@ var vm = require("vm");
 before(function() {
 	var basedir = path.join(__dirname, "../../..");
 
-	var fileName = "src/app.src";
+	var fileName = "src/app.js";
 	var filePath = path.join(basedir, fileName);
 	var code = fs.readFileSync(filePath);
 
@@ -36,7 +36,7 @@ after(function() {
 	//console.log(global);
 });
 
-describe("Default modules set in modules/default/defaultmodules.src", function() {
+describe("Default modules set in modules/default/defaultmodules.js", function() {
 
 	var expectedDefaultModules = [
 		"alert",

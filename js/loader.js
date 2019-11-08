@@ -179,7 +179,7 @@ var Loader = (function() {
 			Log.log("Load script: " + fileName);
 			var script = document.createElement("script");
 			script.type = "text/javascript";
-			script.src = fileName;
+			script.js = fileName;
 			script.onload = function() {
 				if (typeof callback === "function") {callback();}
 			};

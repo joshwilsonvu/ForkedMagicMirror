@@ -414,7 +414,7 @@ Module.register("calendar", {
 	},
 
 	/**
-	 * This function accepts a number (either 12 or 24) and returns a moment.src LocaleSpecification with the
+	 * This function accepts a number (either 12 or 24) and returns a moment.js LocaleSpecification with the
 	 * corresponding timeformat to be used in the calendar display. If no number is given (or otherwise invalid input)
 	 * it will a localeSpecification object with the system locale time format.
 	 *

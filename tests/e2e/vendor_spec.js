@@ -16,7 +16,7 @@ describe("Vendors", function () {
 
 	before(function () {
 		return helpers.startApplication({
-			args: ["src/electron.src"]
+			args: ["src/electron.js"]
 		}).then(function (startedApp) { app = startedApp; });
 	});
 
@@ -27,10 +27,10 @@ describe("Vendors", function () {
 	describe("Get list vendors", function () {
 
 		before(function () {
-			process.env.MM_CONFIG_FILE = "tests/configs/env.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/env.js";
 		});
 
-		var vendors = require(__dirname + "/../../vendor/vendor.src");
+		var vendors = require(__dirname + "/../../vendor/vendor.js");
 		Object.keys(vendors).forEach(vendor => {
 			it(`should return 200 HTTP code for vendor "${vendor}"`, function () {
 				urlVendor = "http://localhost:8080/vendor/" + vendors[vendor];

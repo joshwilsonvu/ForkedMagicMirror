@@ -9,7 +9,7 @@ describe("File src/class", function() {
 
 		before(function(done) {
 			dom = new JSDOM(`<script>var Log = {log: function() {}};</script>\
-					<script src="${path.join(__dirname, "..", "..", "..", "src", "class.src")}">`, { runScripts: "dangerously",
+					<script src="${path.join(__dirname, "..", "..", "..", "src", "class.js")}">`, { runScripts: "dangerously",
 				resources: "usable" });
 			dom.window.onload = function() {
 				const {cloneObject} = dom.window;

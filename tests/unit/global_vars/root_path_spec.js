@@ -6,7 +6,7 @@ var vm = require("vm");
 before(function() {
 	var basedir = path.join(__dirname, "../../..");
 
-	var fileName = "src/app.src";
+	var fileName = "src/app.js";
 	var filePath = path.join(basedir, fileName);
 	var code = fs.readFileSync(filePath);
 
@@ -36,14 +36,14 @@ after(function() {
 	//console.log(global);
 });
 
-describe("'global.root_path' set in src/app.src", function() {
+describe("'global.root_path' set in src/app.js", function() {
 	var expectedSubPaths = [
 		"modules",
 		"serveronly",
 		"src",
-		"src/app.src",
-		"src/main.src",
-		"src/electron.src",
+		"src/app.js",
+		"src/main.js",
+		"src/electron.js",
 		"config"
 	];
 

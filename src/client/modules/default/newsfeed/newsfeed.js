@@ -191,7 +191,7 @@ Module.register("newsfeed",{
 				fullArticle.style.top = "0";
 				fullArticle.style.left = "0";
 				fullArticle.style.border = "none";
-				fullArticle.src = this.getActiveItemURL();
+				fullArticle.js = this.getActiveItemURL();
 				fullArticle.style.zIndex = 1;
 				wrapper.appendChild(fullArticle);
 			}

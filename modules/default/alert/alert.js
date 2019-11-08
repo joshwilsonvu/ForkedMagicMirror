@@ -21,7 +21,7 @@ Module.register("alert",{
 		welcome_message: false,
 	},
 	getScripts: function() {
-		return ["classie.src", "modernizr.custom.src", "notificationFx.src"];
+		return ["classie.js", "modernizr.custom.js", "notificationFx.js"];
 	},
 	getStyles: function() {
 		return ["ns-default.css", "font-awesome.css"];

@@ -2,7 +2,7 @@ var SimpleGit = require("simple-git");
 var simpleGits = [];
 var fs = require("fs");
 var path = require("path");
-var defaultModules = require(__dirname + "/../defaultmodules.src");
+var defaultModules = require(__dirname + "/../defaultmodules.js");
 var NodeHelper = require("node_helper");
 
 module.exports = NodeHelper.create({

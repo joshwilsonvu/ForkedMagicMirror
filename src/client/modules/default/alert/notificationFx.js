@@ -1,5 +1,5 @@
 /**
- * notificationFx.src v1.0.0
+ * notificationFx.js v1.0.0
  * http://www.codrops.com
  *
  * Licensed under the MIT license.

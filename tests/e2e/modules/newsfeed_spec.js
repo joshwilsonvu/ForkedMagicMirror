@@ -13,7 +13,7 @@ describe("Newsfeed module", function() {
 	beforeEach(function() {
 		return helpers
 			.startApplication({
-				args: ["src/electron.src"]
+				args: ["src/electron.js"]
 			})
 			.then(function(startedApp) {
 				app = startedApp;
@@ -26,7 +26,7 @@ describe("Newsfeed module", function() {
 
 	describe("Default configuration", function() {
 		before(function() {
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/newsfeed/default.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/newsfeed/default.js";
 		});
 
 		it("show title newsfeed", function() {

@@ -14,7 +14,7 @@ describe("Compliments module", function() {
 	beforeEach(function() {
 		return helpers
 			.startApplication({
-				args: ["src/electron.src"]
+				args: ["src/electron.js"]
 			})
 			.then(function(startedApp) {
 				app = startedApp;
@@ -28,7 +28,7 @@ describe("Compliments module", function() {
 	describe("parts of days", function() {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/compliments/compliments_parts_day.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/compliments/compliments_parts_day.js";
 		});
 
 		it("if Morning compliments for that part of day", function() {
@@ -66,7 +66,7 @@ describe("Compliments module", function() {
 		describe("Set anytime and empty compliments for morning, evening and afternoon ", function() {
 			before(function() {
 				// Set config sample for use in test
-				process.env.MM_CONFIG_FILE = "tests/configs/modules/compliments/compliments_anytime.src";
+				process.env.MM_CONFIG_FILE = "tests/configs/modules/compliments/compliments_anytime.js";
 			});
 
 			it("Show anytime because if configure empty parts of day compliments and set anytime compliments", function() {
@@ -79,7 +79,7 @@ describe("Compliments module", function() {
 		describe("Only anytime present in configuration compliments", function() {
 			before(function() {
 				// Set config sample for use in test
-				process.env.MM_CONFIG_FILE = "tests/configs/modules/compliments/compliments_only_anytime.src";
+				process.env.MM_CONFIG_FILE = "tests/configs/modules/compliments/compliments_only_anytime.js";
 			});
 
 			it("Show anytime compliments", function() {

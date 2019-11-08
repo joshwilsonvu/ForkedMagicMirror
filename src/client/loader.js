@@ -1,17 +1,22 @@
 import codegen from "codegen.macro";
-import config from "../shared/config";
+import Module from "module";
 
 /*
  * At compile time, matches all of the js files in the modules directory
  * that have the same names as their enclosing folder, the convention for
  * MagicMirror modules. This becomes the list of available modules to load
  */
-let dirs;
+
+const compatEval = js => {
+  return (new Function(js))(Module);
+};
+
 codegen`
   const glob = require("glob");
   const path = require("path");
   const fs = require("fs");
-  const config = require("esm")(module)("../shared/config").default;
+  const esm = require("esm");
+  const config = esm(module)("../shared/config").default;
   
   const files = glob.sync("**/*.[jt]s?(x)", { 
     cwd: path.join(__dirname, "modules"), 
@@ -21,15 +26,12 @@ codegen`
     return Boolean(match) && match[1] === match[2] && config.modules.some(m => m.module === match[1]);
   });
   
-  const isReact = m => m.match(/^import.*['"\`]react['"\`]/);
+  const isReact = m => /^import.*['"\`]react['"\`]/.test(m);
   module.exports = files
-    .map(f => fs.readFileSync(path.resolve("./modules", f)))
-    .map(m => isReact(m) ? "import '" +  m.replace(/\\.[jt]sx?$/, '') + "'" : "require(" + m.replace(/\\.[jt]sx?$/, '') + ")")
+    .map(f => [f, fs.readFileSync(path.resolve("./modules", f), "utf8")])
+    .map(([f, m]) => isReact(m) ? "import './modules/" +  f.replace(/\\.[jt]sx?$/, '') + "'" : "require('./modules/" + f.replace(/\\.[jt]sx?$/, '') + "')")
     .join("\\n");
   console.log(JSON.stringify(module.exports));
 `;
 
-
-
-export default dirs;
 

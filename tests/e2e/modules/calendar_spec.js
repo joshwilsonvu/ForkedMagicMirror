@@ -14,7 +14,7 @@ describe("Calendar module", function() {
 	beforeEach(function() {
 		return helpers
 			.startApplication({
-				args: ["src/electron.src"]
+				args: ["src/electron.js"]
 			})
 			.then(function(startedApp) {
 				app = startedApp;
@@ -28,7 +28,7 @@ describe("Calendar module", function() {
 	describe("Default configuration", function() {
 		before(function() {
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/default.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/default.js";
 		});
 
 		it("Should return TestEvents", function() {
@@ -40,7 +40,7 @@ describe("Calendar module", function() {
 		before(function() {
 			serverBasicAuth.listen(8010);
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/basic-auth.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/basic-auth.js";
 		});
 
 		after(function(done) {
@@ -56,7 +56,7 @@ describe("Calendar module", function() {
 		before(function() {
 			serverBasicAuth.listen(8011);
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/auth-default.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/auth-default.js";
 		});
 
 		after(function(done) {
@@ -72,7 +72,7 @@ describe("Calendar module", function() {
 		before(function() {
 			serverBasicAuth.listen(8012);
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/old-basic-auth.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/old-basic-auth.js";
 		});
 
 		after(function(done) {
@@ -88,7 +88,7 @@ describe("Calendar module", function() {
 		before(function() {
 			serverBasicAuth.listen(8020);
 			// Set config sample for use in test
-			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/fail-basic-auth.src";
+			process.env.MM_CONFIG_FILE = "tests/configs/modules/calendar/fail-basic-auth.js";
 		});
 
 		after(function(done) {

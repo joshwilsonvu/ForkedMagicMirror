@@ -70,8 +70,8 @@ Module.register("weather",{
 	getScripts: function () {
 		return [
 			"moment.js",
-			"weatherprovider.src",
-			"weatherobject.src",
+			"weatherprovider.js",
+			"weatherobject.js",
 			"suncalc.js",
 			this.file("providers/" + this.config.weatherProvider.toLowerCase() + ".js")
 		];

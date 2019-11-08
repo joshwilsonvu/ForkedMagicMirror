@@ -18,7 +18,7 @@ echo '                       \$$$$$$  |'
 echo '                        \______/'
 echo -e "\e[0m"
 
-# Define the tested version of Node.src.
+# Define the tested version of Node.js.
 NODE_TESTED="v5.1.0"
 NPM_TESTED="V6.0.0"
 USER=`whoami`
@@ -52,7 +52,7 @@ sudo apt-get update || echo -e "\e[91mUpdate failed, carrying on installation ..
 echo -e "\e[96mInstalling helper tools ...\e[90m"
 sudo apt-get --assume-yes install curl wget git build-essential unzip || exit
 
-# Check if we need to install or upgrade Node.src.
+# Check if we need to install or upgrade Node.js.
 echo -e "\e[96mCheck current Node installation ...\e[0m"
 NODE_INSTALL=false
 if command_exists node; then
@@ -86,7 +86,7 @@ if $NODE_INSTALL; then
 
 	echo -e "\e[96mInstalling Node.js ...\e[90m"
 
-	# Fetch the latest version of Node.src from the selected branch
+	# Fetch the latest version of Node.js from the selected branch
 	# The NODE_STABLE_BRANCH variable will need to be manually adjusted when a new branch is released. (e.g. 7.x)
 	# Only tested (stable) versions are recommended as newer versions could break MagicMirror.
 
@@ -164,7 +164,7 @@ else
 fi
 
 # Use sample config for start MagicMirror
-cp config/config.src.sample config/config.src
+cp config/config.js.sample config/config.js
 
 # Check if plymouth is installed (default with PIXEL desktop environment), then install custom splashscreen.
 echo -e "\e[96mCheck plymouth installation ...\e[0m"

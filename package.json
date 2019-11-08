@@ -2,7 +2,7 @@
   "name": "magicmirror",
   "version": "2.9.0",
   "description": "The open source modular smart mirror platform.",
-  "main": "client/index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "concurrently --kill-others npm:startonly npm:electron",
     "startonly": "react-scripts start",
@@ -10,8 +10,7 @@
     "electron": "electron -r esm src/server/index.js",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx}",
-    "install": "cd vendor && npm install",
-    "postinstall": "npm run install-fonts",
+    "postinstall": "cd vendor && npm install",
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha tests --recursive",
     "test:unit": "NODE_ENV=test ./node_modules/mocha/bin/mocha tests/unit --recursive",
     "test:e2e": "NODE_ENV=test ./node_modules/mocha/bin/mocha tests/e2e --recursive",
@@ -19,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MichMich/MagicMirror.git"
+    "url": "git+https://github.com/joshwilsonvu/MagicMirror.git"
   },
   "keywords": [
     "magic mirror",
@@ -27,15 +26,17 @@
     "mirror UI",
     "modular"
   ],
-  "author": "Michael Teeuw",
+  "authors": [
+    "Michael Teeuw",
+    "Josh Wilson"
+  ],
   "contributors": [
-    "https://github.com/MichMich/MagicMirror/graphs/contributors"
+    "https://github.com/joshwilsonvu/MagicMirror/graphs/contributors"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MichMich/MagicMirror/issues"
+    "url": "https://github.com/joshwilsonvu/MagicMirror/issues"
   },
-  "homepage": "https://magicmirror.builders",
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",

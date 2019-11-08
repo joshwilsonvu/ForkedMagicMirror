@@ -22,11 +22,11 @@ describe("All font files from roboto.css should be downloadable", function() {
 
 	before(function() {
 		// Set config sample for use in test
-		process.env.MM_CONFIG_FILE = "tests/configs/without_modules.src";
+		process.env.MM_CONFIG_FILE = "tests/configs/without_modules.js";
 
 		return helpers
 			.startApplication({
-				args: ["src/electron.src"]
+				args: ["src/electron.js"]
 			})
 			.then(function(startedApp) {
 				app = startedApp;
