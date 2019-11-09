@@ -2,9 +2,9 @@
  * This component implements the MagicMirror
  */
 
-import React, {useMemo, useReducer} from "react";
+import React, {useMemo, useReducer, useContext} from "react";
 import Module from "./module";
-import dirs from "../loader";
+import * as imports from "../loader";
 
 const getDefaultRegions = () => ({
   "top_bar": [],
@@ -22,7 +22,8 @@ const getDefaultRegions = () => ({
   "fullscreen_below": []
 });
 
-export const MMContext = React.createContext(null);
+const MMContext = React.createContext(null);
+export const useMM = () => useContext(MMContext);
 const MMReducer = (modules = [], {type, ...payload}) => {
   switch(type) {
   case "load":
@@ -43,8 +44,10 @@ const MagicMirror = () => {
 	}
 	return regions;
   }, getDefaultRegions()), [modules]);
-  // Expose a backwards-compatible MM instance that can
-  const MM = {}; // TODO
+  // Expose a backwards-compatible MM instance that can modify the mirror's state
+  const MM = {
+
+  }; // TODO
   return (
 	<MMContext.Provider value={MM}>
 	  <div className="region fullscreen below">

@@ -1,5 +1,5 @@
 import codegen from "codegen.macro";
-import Module from "module";
+import Module from "./module";
 
 /*
  * At compile time, matches all of the js files in the modules directory
@@ -7,29 +7,32 @@ import Module from "module";
  * MagicMirror modules. This becomes the list of available modules to load
  */
 
-const compatEval = js => {
+const compatImport = js => {
   return (new Function(js))(Module);
 };
 
+
 codegen`
   const glob = require("glob");
-  const path = require("path");
+  const node_path = require("path");
   const fs = require("fs");
   const esm = require("esm");
   const config = esm(module)("../shared/config").default;
   
-  const files = glob.sync("**/*.[jt]s?(x)", { 
-    cwd: path.join(__dirname, "modules"), 
+  const paths = glob.sync("**/*.[jt]s?(x)", { 
+    cwd: node_path.join(__dirname, "modules"), 
     ignore: "node_modules/**" 
-  }).filter(p => {
-    let match = /\\/(.+)\\/(.+)\\.[jt]sx?$/.exec(p)
-    return Boolean(match) && match[1] === match[2] && config.modules.some(m => m.module === match[1]);
+  }).map(path => {
+    let match = /\\/(.+)\\/(.+)\\.[jt]sx?$/.exec(path);
+    return (match && match[1] === match[2]) ? [path, match[1]] : [];
+  }).filter(([path, name]) => {
+    return name && config.modules.some(m => m.module === name);
   });
-  
-  const isReact = m => /^import.*['"\`]react['"\`]/.test(m);
-  module.exports = files
-    .map(f => [f, fs.readFileSync(path.resolve("./modules", f), "utf8")])
-    .map(([f, m]) => isReact(m) ? "import './modules/" +  f.replace(/\\.[jt]sx?$/, '') + "'" : "require('./modules/" + f.replace(/\\.[jt]sx?$/, '') + "')")
+  const isReact = contents => /^import.*['"\`]react['"\`]/.test(contents);
+
+  module.exports = paths
+    .map(([path, name]) => [path, name, fs.readFileSync(node_path.resolve("./modules", f), "utf8")])
+    .map(([path, name, contents]) => isReact(contents) ? "import './modules/" +  name + "'" : "compatImport('./modules/" + name + "')")
     .join("\\n");
   console.log(JSON.stringify(module.exports));
 `;

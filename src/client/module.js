@@ -175,8 +175,3 @@ export default class Module {
     //Promise.all(dependencies.map(dep => Loader.loadFile(dep, this, () => {}))).then(cb);
   }
 }
-
-const evalModule = (path, Module = Module) => {
-  //const url = import(`${path}`)
-  //return (new Function(source))(Module); // Evaluate with Module global
-};
