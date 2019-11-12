@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import MM from "./components/magic-mirror";
+import MagicMirror from "./components/magic-mirror";
 import Module from "./module";
 // make CSS globally available
 import "roboto-fontface/css/roboto/roboto-fontface.css";
@@ -35,4 +35,4 @@ let modules = [
 
   }
 };*/
-ReactDOM.render(<MM modules={modules}/>, document.getElementById("root"));
+ReactDOM.render(<MagicMirror modules={modules}/>, document.getElementById("root"));

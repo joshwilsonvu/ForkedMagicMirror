@@ -1,14 +1,27 @@
 import codegen from "codegen.macro";
 import Module from "./module";
+import Compat from "./components/compat";
 
 /*
- * At compile time, matches all of the js files in the modules directory
+ * At compile time, match all of the js files in the modules directory
  * that have the same names as their enclosing folder, the convention for
- * MagicMirror modules. This becomes the list of available modules to load
+ * MagicMirror modules. Include only the modules listed in the user's
+ * configuration file. If the module is legacy (Module.register(...)),
+ * wrap it in a compatible React component. If the module is a React
+ * component, export it.
  */
 
 const compatImport = js => {
-  return (new Function(js))(Module);
+  const globals = {
+    Module,
+
+  };
+  // wrap it in a component and return that
+  return () => <Compat module={(new Function("Module", js))(Module)}/>;
+};
+
+const componentImport = component => {
+
 };
 
 
@@ -17,7 +30,8 @@ codegen`
   const node_path = require("path");
   const fs = require("fs");
   const esm = require("esm");
-  const config = esm(module)("../shared/config").default;
+  let config = esm(module)("../shared/config");
+  config = config.default || config;
   
   const paths = glob.sync("**/*.[jt]s?(x)", { 
     cwd: node_path.join(__dirname, "modules"), 
@@ -32,8 +46,14 @@ codegen`
 
   module.exports = paths
     .map(([path, name]) => [path, name, fs.readFileSync(node_path.resolve("./modules", f), "utf8")])
-    .map(([path, name, contents]) => isReact(contents) ? "import './modules/" +  name + "'" : "compatImport('./modules/" + name + "')")
-    .join("\\n");
+    .map(([path, name, contents]) => {
+        if (isReact(contents)) { 
+          return "import " + name + " from './modules/" +  name + "';\\nexport componentImport(" + name + ");";
+        } else {
+          return "compatImport('./modules/" + name + "');";
+        }
+      }
+    ).join("\\n");
   console.log(JSON.stringify(module.exports));
 `;
 

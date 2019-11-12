@@ -10,3 +10,5 @@ const Compat = ({ module, data }) => {
 
   return <></>;
 };
+
+export default Compat;
