@@ -3,7 +3,8 @@
  */
 
 import React, {useMemo, useReducer, useContext} from "react";
-import Module from "./module";
+import {Module} from "./module";
+import {MMContext} from "../hooks/useMM";
 import * as imports from "../loader";
 
 const getDefaultRegions = () => ({
@@ -22,15 +23,11 @@ const getDefaultRegions = () => ({
   "fullscreen_below": []
 });
 
-const MMContext = React.createContext(null);
-export const useMM = () => useContext(MMContext);
 const MMReducer = (modules = [], {type, ...payload}) => {
-  switch(type) {
-  case "load":
-
-    return modules;
+  switch (type) {
+    // TODO
   default:
-    return modules;
+	return modules;
   }
 };
 
@@ -44,10 +41,23 @@ const MagicMirror = () => {
 	}
 	return regions;
   }, getDefaultRegions()), [modules]);
-  // Expose a backwards-compatible MM instance that can modify the mirror's state
-  const MM = {
 
-  }; // TODO
+  // Expose a backwards-compatible MM instance that can modify the mirror's state
+  const MM = useMemo(() => ({
+	/*updateDom(module, speed) {
+	  dispatch({type: "UPDATE_DOM", module, speed});
+	},*/
+	sendNotification(notification, payload, module) {
+	  dispatch({type: "SEND_NOTIFICATION", notification, payload, module});
+	},
+	hideModule(module, speed, cb) {
+	  dispatch({type: "HIDE_MODULE", module, speed, cb});
+	},
+	showModule(module, speed, cb, options) {
+	  dispatch({type: "SHOW_MODULE", module, speed, cb, options});
+	},
+  }), [dispatch]);
+
   return (
 	<MMContext.Provider value={MM}>
 	  <div className="region fullscreen below">

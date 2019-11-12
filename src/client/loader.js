@@ -1,7 +1,7 @@
+import React from "react";
 import codegen from "codegen.macro";
 import Module from "./module";
-import Compat from "./components/compat";
-
+import { makeCompat} from ""
 /*
  * At compile time, match all of the js files in the modules directory
  * that have the same names as their enclosing folder, the convention for
@@ -16,14 +16,14 @@ const compatImport = js => {
     Module,
 
   };
+  // Evaluate the js with the values of globals in the global scope
+  // eslint-disable-next-line no-new-func
+  (new Function(...Object.keys(globals), js))(...Object.values(globals));
+  const module = Module.definitions[0];
+
   // wrap it in a component and return that
-  return () => <Compat module={(new Function("Module", js))(Module)}/>;
+  return () => <Compat module={module}/>;
 };
-
-const componentImport = component => {
-
-};
-
 
 codegen`
   const glob = require("glob");
@@ -48,9 +48,9 @@ codegen`
     .map(([path, name]) => [path, name, fs.readFileSync(node_path.resolve("./modules", f), "utf8")])
     .map(([path, name, contents]) => {
         if (isReact(contents)) { 
-          return "import " + name + " from './modules/" +  name + "';\\nexport componentImport(" + name + ");";
+          return "export {default as " + name + "} from './modules/" + name + "';";
         } else {
-          return "compatImport('./modules/" + name + "');";
+          return "export const " + name + " = compatImport('./modules/" + name + "');";
         }
       }
     ).join("\\n");

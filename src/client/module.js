@@ -174,4 +174,8 @@ export default class Module {
     cb();
     //Promise.all(dependencies.map(dep => Loader.loadFile(dep, this, () => {}))).then(cb);
   }
+
+  static register(subclass) {
+    // TODO
+  }
 }
