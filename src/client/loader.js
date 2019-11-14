@@ -1,7 +1,7 @@
 import React from "react";
 import codegen from "codegen.macro";
-import Module from "./module";
-import { makeCompat} from ""
+import Module from "./legacy/module";
+
 /*
  * At compile time, match all of the js files in the modules directory
  * that have the same names as their enclosing folder, the convention for
@@ -11,18 +11,15 @@ import { makeCompat} from ""
  * component, export it.
  */
 
-const compatImport = js => {
+const compatImport = (js, name) => {
   const globals = {
     Module,
 
   };
-  // Evaluate the js with the values of globals in the global scope
+  // Evaluate the js with the values of globals in the global scope and wrap in component
   // eslint-disable-next-line no-new-func
   (new Function(...Object.keys(globals), js))(...Object.values(globals));
-  const module = Module.definitions[0];
-
-  // wrap it in a component and return that
-  return () => <Compat module={module}/>;
+  return Module.createComponent(name);
 };
 
 codegen`
@@ -45,12 +42,13 @@ codegen`
   const isReact = contents => /^import.*['"\`]react['"\`]/.test(contents);
 
   module.exports = paths
-    .map(([path, name]) => [path, name, fs.readFileSync(node_path.resolve("./modules", f), "utf8")])
+    .map(([path, name]) => [path, name, fs.readFileSync(node_path.resolve("./modules", path), "utf8")])
     .map(([path, name, contents]) => {
         if (isReact(contents)) { 
           return "export {default as " + name + "} from './modules/" + name + "';";
         } else {
-          return "export const " + name + " = compatImport('./modules/" + name + "');";
+          const contentString = JSON.stringify(contents);
+          return "export const " + name + " = compatImport(" + contentString + ", " + name + ");";
         }
       }
     ).join("\\n");

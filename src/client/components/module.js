@@ -1,10 +1,14 @@
-import React, { useRef, useEffect, useReducer, useImperativeHandle, forwardRef } from "react";
+import React, {useRef, useEffect, useReducer, useImperativeHandle, forwardRef} from "react";
 import useMM from "../hooks/useMM";
+import cmpVersions from "../legacy/cmp-versions";
+import {CSSTransitionGroup} from "react-transition-group";
+import config from "../../shared/config";
+import "../css/fade.css";
 
 // Call forceUpdate() on a ref to this component to rerender
 const useForceUpdate = ref => {
   const [updated, forceUpdate] = useReducer(x => x + 1, 0);
-  useImperativeHandle(ref, () => ({ forceUpdate }), []);
+  useImperativeHandle(ref, () => ({forceUpdate}), []);
   return updated;
 };
 
@@ -31,7 +35,9 @@ const Escape = forwardRef(({getDom, className}, ref) => {
 		} // else do nothing
 	  }
 	});
-	return () => { abort = true; }
+	return () => {
+	  abort = true;
+	};
   }, [updated, getDom]);
   useEffect(() => () => div.current.removeChild(div.current.firstChild), []);
   return <div ref={div} className={className}/>;
@@ -40,12 +46,12 @@ const Escape = forwardRef(({getDom, className}, ref) => {
 class ModuleGuard extends React.Component {
   constructor(props) {
 	super(props);
-	this.state = { hasError: false, errorInfo: "" };
+	this.state = {hasError: false, errorInfo: ""};
   }
 
   static getDerivedStateFromError() {
 	// Update state so the next render will show the fallback UI.
-	return { hasError: true };
+	return {hasError: true};
   }
 
   componentDidCatch(error, errorInfo) {
@@ -53,7 +59,7 @@ class ModuleGuard extends React.Component {
 	console.error(error, errorInfo);
 	console.log("MagicMirror will not quit, but it might be a good idea to check why this happened.");
 	console.log(`If you think this really is an issue, please open an issue on ${this.props.module.name}'s GitHub page.`);
-	this.setState({errorInfo})
+	this.setState({errorInfo});
   }
 
   render() {
@@ -78,27 +84,87 @@ const Module = ({}) => {
 
 };
 
-const makeCompat = module => {
-  const MM = useMM();
-  const ref = useRef(null);
-  const {identifier, name} = module;
-  const className = typeof module.data.classes === "string"
-	? `module ${name} ${module.data.classes}`
-	: name;
+const makeCompat = (Legacy, name) => {
+  // Create a React component wrapping the given subclass
+  const Compat = props => {
+	const {identifier, hidden, classes, header, position, config, speed} = props;
+	const data = {identifier, name, classes, header, position, config};
 
-  const header = module.getHeader();
-  return (
-	<div id={identifier} className={className} style={{opacity}}>
-	  {typeof header !== "undefined" && header !== "" && (
-		<header className="module-header" dangerouslySetInnerHTML={header}/>
-	  )}
-	  <ModuleGuard module={module}>
-		<Escape ref={ref} className="module-content" getDom={module.getDom}/>
-	  </ModuleGuard>
-	</div>
-  );
+	const MM = useMM();
+	const legacy = useRef(null);
+	const dom = useRef(null);
+	const ref = useRef(null);
+	// Set data, initialize, and start on mount
+	useEffect(() => {
+	  legacy.current && legacy.current.setData(data);
+	});
+	useEffect(() => {
+	  const l = legacy.current = new Legacy();
+	  if (l.requiresVersion && cmpVersions(config.version, l.requiresVersion) < 0) {
+		throw new Error(`Module ${Legacy.name} requires MM version ${l.requiresVersion}, running ${config.version}`);
+	  }
+	  l.setData(data);
+	  l.MM = MM;
+	  l.init();
+	  l.loaded(() => {
+	  }); // no longer required to call callback
+	  // FIXME: possible breakage, potentially calling start() before all modules loaded
+	  l.start();
+	}, []);
+	useEffect(() => {
+	  const l = legacy.current;
+	  l.hidden = hidden;
+	  l.setData(data);
+	});
+
+	let duration = (speed || speed === 0) ? speed : 1000;
+	return hidden ? null : (
+	  <CSSTransitionGroup
+		transitionName="fade" /* references fade.css */
+		transitionEnterTimeout={duration}
+		transitionLeaveTimeout={duration}
+	  >
+		<div id={identifier} className={data.classes}>
+		  {typeof header !== "undefined" && header !== "" && (
+			<header className="module-header" dangerouslySetInnerHTML={header}/>
+		  )}
+		  <ModuleGuard module={module}>
+			<Escape ref={ref} className="module-content" getDom={module.getDom}/>
+		  </ModuleGuard>
+		</div>
+	  </CSSTransitionGroup>
+	);
+  };
+
+  // Assign correct .name property to make development easier
+  Object.defineProperty(Compat, "name", {value: Legacy.name, configurable: true});
+
+  return Compat;
 };
+/*
+const makeCompat = subclass => {
 
+  return props => {
+	const MM = useMM();
+	const ref = useRef(null);
+	const {identifier, name} = module;
+	const className = typeof module.data.classes === "string"
+	  ? `module ${name} ${module.data.classes}`
+	  : name;
 
+	const header = module.getHeader();
+	return (
+	  <div id={identifier} className={className} style={{opacity}}>
+		{typeof header !== "undefined" && header !== "" && (
+		  <header className="module-header" dangerouslySetInnerHTML={header}/>
+		)}
+		<ModuleGuard module={module}>
+		  <Escape ref={ref} className="module-content" getDom={module.getDom}/>
+		</ModuleGuard>
+	  </div>
+	);
+  };
+};
+*/
 
-export { makeCompat, Module };
+export {makeCompat, Module};

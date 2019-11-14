@@ -3,9 +3,10 @@
  * existing MagicMirror plugins. These plugins will subclass this class,
  * and the resulting instance will be wrapped in a React component.
  */
-
+import React, {useState, useEffect, useRef} from "react";
 import {Environment, WebLoader} from "nunjucks";
 import path from "path";
+import {makeCompat} from "../components/module";
 
 const nunjucksMap = new WeakMap();
 const getNunjucksEnvironment = module => {
@@ -41,6 +42,7 @@ export default class Module {
 	this.hidden = false;
 	this.setConfig(data.config || {});
   }
+  static definitions = {};
 
   /* All methods (and properties below can be overridden. */
 
@@ -175,7 +177,22 @@ export default class Module {
     //Promise.all(dependencies.map(dep => Loader.loadFile(dep, this, () => {}))).then(cb);
   }
 
-  static register(subclass) {
-    // TODO
+  // Register a subclass
+  static register(name, module) {
+	// Create a subclass of this class with the properties of subclass
+	function Legacy() {
+	  Module.call(this);
+	}
+	Legacy.prototype = Object.create(Module);
+	Object.assign(Legacy.prototype, module);
+	Legacy.name = name;
+	Legacy.prototype.constructor = Legacy;
+	this.definitions[name] = Legacy;
+  }
+
+  // Create the React component from the registered subclass
+  static createComponent(name) {
+    return makeCompat(this.definitions[name], name);
   }
 }
+

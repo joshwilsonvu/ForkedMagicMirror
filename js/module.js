@@ -198,7 +198,7 @@ var Module = Class.extend({
 		Log.log(this.name + " is suspended.");
 	},
 
-	/* resume()
+	 /* resume()
 	 * This method is called when a module is shown.
 	 */
 	resume: function () {
@@ -218,7 +218,6 @@ var Module = Class.extend({
 		this.data = data;
 		this.name = data.name;
 		this.identifier = data.identifier;
-		this.hidden = false;
 
 		this.setConfig(data.config);
 	},
