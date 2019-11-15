@@ -5,7 +5,7 @@
 .fade-enter.fade-enter-active {
     opacity: 1;
     transition-property: opacity;
-    transition-duration: 500ms;
+    transition-duration: 1000ms;
     transition-timing-function: ease-in;
 }
 

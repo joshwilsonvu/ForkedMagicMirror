@@ -4,10 +4,7 @@ import defaults from "../client/defaults";
 
 // Import the user's configuration at compile time.
 // To use a different file, fill config.js with `module.exports = require("path/to/configuration/file")`
-const userConfig = (() => {
-    const raw = require("../../config/config"); // require allows importing outside of /src in create-react-app
-    return raw.default || raw.config || raw;
-})();
+import userConfig from "./userconfig/config";
 
 // Warn about deprecated options
 const deprecatedOptions = ["kioskmode"];

@@ -3,7 +3,6 @@
  * existing MagicMirror plugins. These plugins will subclass this class,
  * and the resulting instance will be wrapped in a React component.
  */
-import React, {useState, useEffect, useRef} from "react";
 import {Environment, WebLoader} from "nunjucks";
 import path from "path";
 import {makeCompat} from "../components/module";
