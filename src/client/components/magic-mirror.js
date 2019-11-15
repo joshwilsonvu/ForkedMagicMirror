@@ -3,102 +3,102 @@
  */
 
 import React, {useMemo, useReducer} from "react";
-import {MMContext} from "../hooks/useMM";
+import nanoid from "nanoid";
+import {TransitionGroup} from "react-transition-group";
+import {MMProvider} from "../hooks/useMM";
+import useRegions from "../hooks/useRegions";
 import * as imports from "../loader";
-
-const getDefaultRegions = () => ({
-  "top_bar": [],
-  "top_left": [],
-  "top_center": [],
-  "top_right": [],
-  "upper_third": [],
-  "middle_center": [],
-  "lower_third": [],
-  "bottom_left": [],
-  "bottom_center": [],
-  "bottom_right": [],
-  "bottom_bar": [],
-  "fullscreen_above": [],
-  "fullscreen_below": []
-});
+import config from "../../shared/config";
 
 const MMReducer = (modules = [], {type, ...payload}) => {
   switch (type) {
-    // TODO
+	// TODO
   default:
 	return modules;
   }
 };
 
-const MagicMirror = () => {
-  const [modules, dispatch] = useReducer(MMReducer, []);
-  // Divide modules into the various regions by their .data.position property
-  const regions = useMemo(() => modules.reduce((regions, m) => {
-	let pos = m.data.position;
-	if (regions.hasOwnProperty(pos)) {
-	  regions[pos].push(<Module module={m}/>);
+const MMInit = () => {
+  return config.modules.map(({module, position, classes, header, disabled, config}, i) => {
+	if (imports[module]) {
+	  if (!disabled) {
+		return {
+		  hidden: false,
+		  speed: 1000,
+		  identifier: `MM${nanoid(10)}`, // unique identifier for each module
+		  component: imports[module],
+		  name: module,
+		  position,
+		  classes,
+		  header,
+		  config
+		};
+	  }
+	} else {
+	  throw new Error(`Module ${module} does not seem to be installed.`);
 	}
-	return regions;
-  }, getDefaultRegions()), [modules]);
+  });
+};
 
-  // Expose a backwards-compatible MM instance that can modify the mirror's state
-  const MM = useMemo(() => ({
-	/*updateDom(module, speed) {
-	  dispatch({type: "UPDATE_DOM", module, speed});
-	},*/
-	sendNotification(notification, payload, module) {
-	  dispatch({type: "SEND_NOTIFICATION", notification, payload, module});
-	},
-	hideModule(module, speed, cb) {
-	  dispatch({type: "HIDE_MODULE", module, speed, cb});
-	},
-	showModule(module, speed, cb, options) {
-	  dispatch({type: "SHOW_MODULE", module, speed, cb, options});
-	},
-  }), [dispatch]);
+const MagicMirror = () => {
+  const [modules, dispatch] = useReducer(MMReducer, null, MMInit);
+  return (
+	<MMProvider dispatch={dispatch}>
+	  <MMLayout modules={modules} />
+	</MMProvider>
+  );
+};
+
+
+
+const MMLayout = ({ modules }) => {
+  const {
+	fullscreen_below, top_bar, top_left, top_center, top_right, upper_third, middle_center,
+	lower_third, bottom_bar, bottom_left, bottom_center, bottom_right, fullscreen_above
+  } = useRegions(modules);
 
   return (
-	<MMContext.Provider value={MM}>
+	<>
 	  <div className="region fullscreen below">
-		<div className="container">{regions.fullscreen_below}</div>
+		<TransitionGroup className="container">{fullscreen_below}</TransitionGroup>
 	  </div>
 	  <div className="region top bar">
-		<div className="container">{regions.top_bar}</div>
+		<TransitionGroup className="container">{top_bar}</TransitionGroup>
 		<div className="region top left">
-		  <div className="container">{regions.top_left}</div>
+		  <TransitionGroup className="container">{top_left}</TransitionGroup>
 		</div>
 		<div className="region top center">
-		  <div className="container">{regions.top_center}</div>
+		  <TransitionGroup className="container">{top_center}</TransitionGroup>
 		</div>
 		<div className="region top right">
-		  <div className="container">{regions.top_right}</div>
+		  <TransitionGroup className="container">{top_right}</TransitionGroup>
 		</div>
 	  </div>
 	  <div className="region upper third">
-		<div className="container">{regions.upper_third}</div>
+		<TransitionGroup className="container">{upper_third}</TransitionGroup>
 	  </div>
 	  <div className="region middle center">
-		<div className="container">{regions.middle_center}</div>
+		<TransitionGroup className="container">{middle_center}</TransitionGroup>
 	  </div>
 	  <div className="region lower third">
-		<div className="container"><br/>{regions.lower_third}</div>
+		<TransitionGroup className="container"><br/>{lower_third}</TransitionGroup>
 	  </div>
 	  <div className="region bottom bar">
-		<div className="container">{regions.bottom_bar}</div>
+		<TransitionGroup className="container">{bottom_bar}</TransitionGroup>
 		<div className="region bottom left">
-		  <div className="container">{regions.bottom_left}</div>
+		  <TransitionGroup className="container">{bottom_left}</TransitionGroup>
 		</div>
 		<div className="region bottom center">
-		  <div className="container">{regions.bottom_center}</div>
+		  <TransitionGroup className="container">{bottom_center}</TransitionGroup>
 		</div>
 		<div className="region bottom right">
-		  <div className="container">{regions.bottom_right}</div>
+		  <TransitionGroup className="container">{bottom_right}</TransitionGroup>
 		</div>
 	  </div>
 	  <div className="region fullscreen above">
-		<div className="container">{regions.fullscreen_above}</div>
+		<TransitionGroup className="container">{fullscreen_above}</TransitionGroup>
 	  </div>
-	</MMContext.Provider>
+	</>
   );
 };
 
