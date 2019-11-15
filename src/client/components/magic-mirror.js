@@ -2,8 +2,7 @@
  * This component implements the MagicMirror
  */
 
-import React, {useMemo, useReducer, useContext} from "react";
-import {Module} from "./module";
+import React, {useMemo, useReducer} from "react";
 import {MMContext} from "../hooks/useMM";
 import * as imports from "../loader";
 

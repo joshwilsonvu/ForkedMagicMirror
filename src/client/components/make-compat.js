@@ -1,10 +1,9 @@
-import React, {useRef, useEffect, useReducer, useImperativeHandle, forwardRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 import useMM from '../hooks/useMM';
 import cmpVersions from '../legacy/cmp-versions';
 import {CSSTransition} from 'react-transition-group';
 import usePrevious from '../hooks/usePrevious';
-import config from '../../shared/config';
-import '../css/fade.css';
+import '../legacy/fade.css';
 
 // An escape hatch from React. Pass the dom prop to imperatively add HTMLElements.
 const Escape = ({dom, className}) => {
@@ -23,47 +22,6 @@ const Escape = ({dom, className}) => {
   // cleanup on unmount
   useEffect(() => () => div.current.removeChild(div.current.firstChild), []);
   return <div ref={div} className={className}/>;
-};
-
-class ModuleGuard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {hasError: false, errorInfo: ''};
-  }
-
-  static getDerivedStateFromError() {
-    // Update state so the next render will show the fallback UI.
-    return {hasError: true};
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.log(`Whoops! There was an uncaught exception in module ${this.props.name}`);
-    console.error(error, errorInfo);
-    console.log('MagicMirror will not quit, but it might be a good idea to check why this happened.');
-    console.log(`If you think this really is an issue, please open an issue on ${this.props.name}'s GitHub page.`);
-    this.setState({errorInfo});
-  }
-
-  render() {
-    if (this.state.hasError) {
-      if (process.env.NODE_ENV !== 'production') {
-        return (
-          <div>
-            <h4>{`Something went wrong in module ${this.props.name}.`}</h4>
-            {this.state.errorInfo && <pre>{this.state.errorInfo}</pre>}
-          </div>
-        );
-      } else {
-        return null; // don't display error'ed module in production
-      }
-    } else {
-      return <>{this.props.children}</>;
-    }
-  }
-}
-
-const Module = ({}) => {
-
 };
 
 const makeCompat = (Legacy, name) => {
@@ -124,4 +82,4 @@ const makeCompat = (Legacy, name) => {
   return Compat;
 };
 
-export {makeCompat, Module};
+export default makeCompat;
