@@ -5,7 +5,7 @@
  */
 import {Environment, WebLoader} from "nunjucks";
 import path from "path";
-import {makeCompat} from "../components/module";
+import makeCompat from "../components/make-compat";
 
 const nunjucksMap = new WeakMap();
 const getNunjucksEnvironment = module => {
