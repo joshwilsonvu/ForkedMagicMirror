@@ -17,11 +17,13 @@ const Escape = ({dom, className}) => {
 	} else if (!dom && oldDom) {
 	  div.current.removeChild(oldDom);
 	} // else do nothing
-  }, [dom]);
+  }, [dom, oldDom]);
   // cleanup on unmount
   useEffect(() => () => div.current.removeChild(div.current.firstChild), []);
   return <div ref={div} className={className}/>;
 };
+
+const version = config.version;
 
 const makeCompat = (Legacy, name) => {
   // Create a React component wrapping the given subclass
@@ -37,6 +39,7 @@ const makeCompat = (Legacy, name) => {
 	useEffect(() => {
 	  legacy.current && legacy.current.setData(data);
 	});
+	// eslint-ignore-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 	  const l = legacy.current = new Legacy();
 	  if (l.requiresVersion && cmpVersions(config.version, l.requiresVersion) < 0) {

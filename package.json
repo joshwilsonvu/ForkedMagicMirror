@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "concurrently --kill-others npm:startonly npm:electron",
-    "startonly": "NODE_PRESERVE_SYMLINKS=1 react-scripts start",
-    "build": "NODE_PRESERVE_SYMLINKS=1 react-scripts build",
+    "startonly": "react-scripts start",
+    "build": "react-scripts build",
     "electron": "electron -r esm src/server/index.js",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx}",
