@@ -10,15 +10,9 @@ import Module from "./legacy/module";
  * component, export it.
  */
 
-
-
-import {default as helloworld} from "../shared/modules/default/helloworld/helloworld";
 const exports = {};
-exports["helloworld"] = helloworld;
 
-
-//codegen`
-void `
+codegen`
   const glob = require("glob");
   const node_path = require("path");
   const fs = require("fs");
@@ -42,7 +36,7 @@ void `
     .map(([path, name]) => [path, name, fs.readFileSync(node_path.resolve("./modules", path), "utf8")])
     .map(([path, name, contents]) => {
         if (isReact(contents)) {
-          return "import {default as " + name + "} from '../shared/modules/" + path + "';\\nexports[" + name + "] = " + name + ";";
+          return ${`const ${name} = require('../shared/modules/${path}').default;\nexports[${name}] = ${name};`};
         } else {
           const contentString = JSON.stringify(contents);
           return "exports[" + name + "] = compatImport(" + contentString + ", " + name + ");";
