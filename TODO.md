@@ -22,3 +22,8 @@
   sweet, sweet features we love, why not run a watcher process that copies
   the files we're interested in to a hidden folder and processes them there?
   Gets around symlinks, HMR failures, lets react-scripts do the hard work.
+
+  * But maybe we can do the same thing by forking react-scripts, adding a
+    custom loader, and *maybe* working with the `module.hot` API. This
+    would get rid of the messiness of watching files and running a separate
+    process.
