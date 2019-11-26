@@ -8,7 +8,7 @@ import {TransitionGroup} from 'react-transition-group';
 import {MMProvider} from '../hooks/useMM';
 import useRegions from '../hooks/useRegions';
 import * as imports from '../loader';
-import config from '../../shared/config';
+import config from '../config';
 
 const MMReducer = (modules = [], {type, ...payload}) => {
   switch (type) {

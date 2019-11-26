@@ -12,7 +12,7 @@ import Module from "./legacy/module";
 
 const exports = {};
 
-codegen`
+void /* codegen */`
   const glob = require("glob");
   const node_path = require("path");
   const fs = require("fs");
@@ -36,14 +36,14 @@ codegen`
     .map(([path, name]) => [path, name, fs.readFileSync(node_path.resolve("./modules", path), "utf8")])
     .map(([path, name, contents]) => {
         if (isReact(contents)) {
-          return ${`const ${name} = require('../shared/modules/${path}').default;\nexports[${name}] = ${name};`};
+          return \`exports.\${name} = require('../shared/modules/\${path}').default;\nexports[\${name}] = \${name};\`;
         } else {
           const contentString = JSON.stringify(contents);
-          return "exports[" + name + "] = compatImport(" + contentString + ", " + name + ");";
+          return \`exports.\${name} = compatImport(\${contentString}, \${name});\`;
         }
       }
     ).join("\\n");
-  console.log(module.exports);
+  console.log(exports);
 `;
 
 
@@ -54,8 +54,14 @@ const compatImport = (js, name) => {
   };
   // Evaluate the js with the values of globals in the global scope and wrap in component
   // eslint-disable-next-line no-new-func
-  (new Function(...Object.keys(globals), js))(...Object.values(globals));
+  (new Function(...Object.keys(globals), `
+  ${js}
+  `))(...Object.values(globals));
   return Module.createComponent(name);
 };
+
+let clock = ["clock", "clock"].join("/");
+
+exports["clock"] = import("url-loader!../shared/modules/legacy/" + clock);
 
 export default exports;
