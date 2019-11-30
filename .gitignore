@@ -11,6 +11,7 @@ coverage
 .grunt
 .lock-wscript
 build
+dist
 node_modules
 jspm_modules
 .npm

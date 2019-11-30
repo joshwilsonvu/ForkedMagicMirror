@@ -5,17 +5,16 @@
  */
 import {Environment, WebLoader} from "nunjucks";
 import path from "path";
-import makeCompat from "../components/make-compat";
 
 const nunjucksMap = new WeakMap();
 const getNunjucksEnvironment = module => {
   let env = nunjucksMap.get(module);
   if (env) {
-	return env;
+    return env;
   }
-  env = new Environment(new WebLoader(this.file(""), {async: true}), {
-	trimBlocks: true,
-	lstripBlocks: true
+  env = new Environment(new WebLoader(module.file(""), {async: true}), {
+    trimBlocks: true,
+    lstripBlocks: true
   });
   env.addFilter("translate", str => module.translate(str));
   nunjucksMap.set(module, env);
@@ -35,11 +34,11 @@ const socketMap = new WeakMap();
 
 export default class Module {
   constructor(data) {
-	this.data = data;
-	this.name = data.name || "";
-	this.identifier = data.identifier || "";
-	this.hidden = false;
-	this.setConfig(data.config || {});
+    this.data = data;
+    this.name = data.name || "";
+    this.identifier = data.identifier || "";
+    this.hidden = false;
+    this.setConfig(data.config || {});
   }
   static definitions = {};
 
@@ -60,49 +59,49 @@ export default class Module {
 
   // Called when the module is started (compat).
   start() {
-	console.info(`Starting module: ${this.name}`);
+    console.info(`Starting module: ${this.name}`);
   }
 
   // Returns a list of scripts the module requires to be loaded (compat).
   getScripts() {
-	return [];
+    return [];
   }
 
   // Returns a list of stylesheets the module requires to be loaded (compat).
   getStyles() {
-	return [];
+    return [];
   }
 
   // Returns a map of translation files the module requires to be loaded.
   getTranslations() {
-	return false;
+    return false;
   }
 
   // This method generates the dom which needs to be displayed (compat).
   // Use one of getDom() or getTemplate() if not using React.
   async getDom() {
-	let div = document.createElement("div");
-	let template = this.getTemplate();
-	let templateData = this.getTemplateData();
+    let div = document.createElement("div");
+    let template = this.getTemplate();
+    let templateData = this.getTemplateData();
 
-	if (/^.*((\.html)|(\.njk))$/.test(template)) {
-	  // the template is a filename
-	  return new Promise((resolve, reject) => {
-		getNunjucksEnvironment(this).render(template, templateData, (err, res) => {
-		  if (err) {
-			console.error(err);
-			reject(err);
-		  } else {
-			div.innerHTML = res;
-			resolve(div);
-		  }
-		});
-	  });
-	} else {
-	  // the template is a template string.
-	  div.innerHTML = getNunjucksEnvironment(this).renderString(template, templateData);
-	  return div;
-	}
+    if (/^.*((\.html)|(\.njk))$/.test(template)) {
+      // the template is a filename
+      return new Promise((resolve, reject) => {
+        getNunjucksEnvironment(this).render(template, templateData, (err, res) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          } else {
+            div.innerHTML = res;
+            resolve(div);
+          }
+        });
+      });
+    } else {
+      // the template is a template string.
+      div.innerHTML = getNunjucksEnvironment(this).renderString(template, templateData);
+      return div;
+    }
   }
 
   // Generates the header string to be displayed if a user has a header configured for this module.
@@ -112,41 +111,41 @@ export default class Module {
 
   // Returns the template for the default getDom() implementation.
   getTemplate() {
-	return `<div class="normal">${this.name}</div><div class="small dimmed">${this.identifier}</div>`;
+    return `<div class="normal">${this.name}</div><div class="small dimmed">${this.identifier}</div>`;
   }
 
   // Returns the data to be used in the template.
   getTemplateData() {
-	return {};
+    return {};
   }
 
   // Called when a notification arrives, by the Magic Mirror core.
   notificationReceived(notification, payload, sender) {
-	if (sender) {
-	  console.log(`${this.name} received a module notification: ${notification} from sender: ${sender.name}`);
-	} else {
-	  console.log(`${this.name} received a system notification: ${notification}`);
-	}
+    if (sender) {
+      console.log(`${this.name} received a module notification: ${notification} from sender: ${sender.name}`);
+    } else {
+      console.log(`${this.name} received a system notification: ${notification}`);
+    }
   }
 
   // Called when a socket notification arrives.
   socketNotificationReceived(notification, payload) {
-	console.log(`${this.name} received a socket notification: ${notification} - Payload: ${payload}`);
+    console.log(`${this.name} received a socket notification: ${notification} - Payload: ${payload}`);
   }
 
   // Called when a module is hidden.
   suspend() {
-	console.log(`${this.name} is suspended.`);
+    console.log(`${this.name} is suspended.`);
   }
 
   // Called when a module is shown.
   resume() {
-	console.log(`${this.name} is resumed.`);
+    console.log(`${this.name} is resumed.`);
   }
 
   // Set the module config and combine it with the module defaults.
   setConfig(config) {
-	this.config = {...this.defaults, ...config};
+    this.config = {...this.defaults, ...config};
   }
 
   // Returns a socket object. If it doesn't exist, it's created.
@@ -177,21 +176,16 @@ export default class Module {
   }
 
   // Register a subclass
-  static register(name, module) {
-	// Create a subclass of this class with the properties of subclass
-	function Legacy() {
-	  Module.call(this);
-	}
-	Legacy.prototype = Object.create(Module);
-	Object.assign(Legacy.prototype, module);
-	Legacy.name = name;
-	Legacy.prototype.constructor = Legacy;
-	this.definitions[name] = Legacy;
-  }
-
-  // Create the React component from the registered subclass
-  static createComponent(name) {
-    return makeCompat(this.definitions[name], name);
+  static register(module) {
+    // Create a subclass of this class with the properties of subclass
+    function Legacy() {
+      Module.call(this);
+    }
+    Legacy.prototype = Object.create(Module);
+    Object.assign(Legacy.prototype, module);
+    Legacy.name = name;
+    Legacy.prototype.constructor = Legacy;
+    this._setDefinition && this._setDefinition(Legacy);
+    return Legacy;
   }
 }
-

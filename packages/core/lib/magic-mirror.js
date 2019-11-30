@@ -2,13 +2,11 @@
  * This component implements the MagicMirror
  */
 
-import React, {useMemo, useReducer} from 'react';
+import React, {useReducer} from 'react';
 import nanoid from 'nanoid';
 import {TransitionGroup} from 'react-transition-group';
-import {MMProvider} from '../hooks/useMM';
-import useRegions from '../hooks/useRegions';
-import * as imports from '../loader';
-import config from '../config';
+import {MMProvider} from './useMM';
+import useRegions from './useRegions';
 
 const MMReducer = (modules = [], {type, ...payload}) => {
   switch (type) {
@@ -40,8 +38,9 @@ const MMInit = () => {
   });
 };
 
-const MagicMirror = () => {
-  const [modules, dispatch] = useReducer(MMReducer, null, MMInit);
+const MagicMirror = ({m, children, ...config}) => {
+  // config is only initial arg, changing props doesn't do anything
+  const [modules, dispatch] = useReducer(MMReducer, config, MMInit);
   return (
     <MMProvider dispatch={dispatch}>
       <MMLayout modules={modules}/>

@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "concurrently --kill-others npm:startonly npm:electron",
-    "startonly": "react-scripts start",
-    "build": "react-scripts build",
+    "startonly": "mirror-scripts start",
+    "build": "mirror-scripts build",
     "electron": "electron -r esm src/server/index.js",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx}",
@@ -46,6 +46,7 @@
     "danger": "^3.1.3",
     "http-auth": "^3.2.3",
     "jsdom": "^11.6.2",
+    "mirror-scripts": "file:packages/mirror-scripts",
     "mocha": "^4.1.0",
     "mocha-each": "^1.1.0",
     "mocha-logger": "^1.0.6",
@@ -54,6 +55,7 @@
     "spectron": "^3.8.0"
   },
   "dependencies": {
+    "@mm/core": "file:packages/core",
     "colors": "^1.1.2",
     "electron": "^3.0.13",
     "esm": "^3.2.25",
@@ -68,7 +70,6 @@
     "nunjucks": "^3.2.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
-    "react-scripts": "^3.2.0",
     "react-transition-group": "^4.3.0",
     "request": "^2.88.0",
     "roboto-fontface": "^0.10.0",

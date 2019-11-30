@@ -1,0 +1,38 @@
+{
+  "name": "@mm/core",
+  "version": "0.0.1",
+  "description": "React components for Magic Mirror.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rimraf dist && babel lib -d dist",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": "Josh Wilson <joshua.wilson@vanderbilt.edu>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-export-default-from": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "rimraf": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "babel": {
+    "plugins": [
+      "@babel/plugin-proposal-export-default-from"
+    ],
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  }
+}

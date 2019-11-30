@@ -1,8 +1,14 @@
 import React, {useRef, useEffect} from 'react';
-import useMM from '../hooks/useMM';
-import cmpVersions from '../legacy/cmp-versions';
-import ModuleGuard from './module-guard';
-import usePrevious from '../hooks/usePrevious';
+import {useMM, ModuleGuard} from '@mm/core';
+import semver from 'semver';
+
+const usePrevious = value => {
+  const ref = useRef(null);
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
+};
 
 // An escape hatch from React. Pass the dom prop to imperatively add HTMLElements.
 const Escape = ({dom, className}) => {
@@ -40,7 +46,7 @@ const makeCompat = (Legacy, name) => {
     // eslint-ignore-next-line react-hooks/exhaustive-deps
     useEffect(() => {
       const l = legacy.current = new Legacy();
-      if (l.requiresVersion && cmpVersions(config.version, l.requiresVersion) < 0) {
+      if (l.requiresVersion && !semver.gt(l.requiresVersion, config.version)) {
         throw new Error(`Module ${Legacy.name} requires MM version ${l.requiresVersion}, running ${config.version}`);
       }
       l.setData(data);

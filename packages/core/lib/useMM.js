@@ -1,26 +1,27 @@
 import React, {useContext, useMemo} from 'react';
 
-export const MMContext = React.createContext(null);
+const MMContext = React.createContext(null);
 
 class MMClass {
   constructor(identifier, dispatch) {
+    this.i = identifier;
     this.d = action => dispatch({...action, identifier});
   }
 
   updateDom(_, speed) {
-    this.d({type: 'UPDATE_DOM', speed});
+    this.d({type: 'UPDATE_DOM', i: this.i, speed});
   }
 
   sendNotification(notification, payload, module) {
-    this.d({type: 'SEND_NOTIFICATION', notification, payload, module});
+    this.d({type: 'SEND_NOTIFICATION', i: this.i, notification, payload, module});
   }
 
-  hideModule(identifier, _, speed, cb) {
-    this.d({type: 'HIDE_MODULE', speed, cb});
+  hideModule( _, speed, cb) {
+    this.d({type: 'HIDE_MODULE', i: this.i, speed, cb});
   }
 
   showModule(identifier, _, speed, cb, options) {
-    this.d({type: 'SHOW_MODULE', speed, cb, options});
+    this.d({type: 'SHOW_MODULE', i: this.i, speed, cb, options});
   }
 }
 

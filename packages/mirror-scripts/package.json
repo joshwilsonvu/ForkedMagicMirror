@@ -4,15 +4,15 @@
   "description": "Configuration and scripts for Create React App.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/facebook/create-react-app.git",
-    "directory": "packages/react-scripts"
+    "url": "https://github.com/joshwilsonvu/MagicMirror.git",
+    "directory": "packages/mirror-scripts"
   },
   "license": "MIT",
   "engines": {
     "node": ">=8.10"
   },
   "bugs": {
-    "url": "https://github.com/facebook/create-react-app/issues"
+    "url": "https://github.com/joshwilsonvu/MagicMirror/issues"
   },
   "files": [
     "bin",
@@ -24,10 +24,11 @@
     "utils"
   ],
   "bin": {
-    "react-scripts": "./bin/react-scripts.js"
+    "mirror-scripts": "./bin/mirror-scripts.js"
   },
   "types": "./lib/react-app.d.ts",
   "dependencies": {
+    "mirror-loader": "file:../mirror-loader",
     "@babel/core": "7.7.4",
     "@svgr/webpack": "4.3.3",
     "@typescript-eslint/eslint-plugin": "^2.8.0",
