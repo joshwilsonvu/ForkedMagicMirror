@@ -56,6 +56,7 @@ module.exports = function ({types: t}) {
                 // find the "module" property of the object
                 if (!property.node.computed && t.isIdentifierOrLiteral(property.node.key, 'module') && t.isStringLiteral(property.node.value)) {
                   const moduleName = property.node.value.value; // literal value of property value
+                  // insert an _import property with a lazy dynamic import as its value
                   const _import = buildImport(`modules/${moduleName}`);
                   property.insertAfter(_import);
                   break; // don't search through other properties
