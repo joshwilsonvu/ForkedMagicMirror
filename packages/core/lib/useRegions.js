@@ -1,6 +1,6 @@
 import {CSSTransition} from "react-transition-group";
 import React, {useMemo} from "react";
-import "../../../src/client/fade.css";
+import "./fade.css";
 
 const getDefaultRegions = () => ({
   "top_bar": [],

@@ -1,5 +1,5 @@
 {
-  "name": "legacy-loader",
+  "name": "@mm/legacy-loader",
   "version": "0.0.1",
   "description": "Converts legacy MagicMirror modules into React components.",
   "loader": "index.js",
