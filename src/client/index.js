@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {MagicMirror} from 'mm';
-import config from 'config/config';
+import {MagicMirror} from 'magicmirrorx';
+import config from '../config/config';
 
 // make CSS globally available
 import 'roboto-fontface/css/roboto/roboto-fontface.css';

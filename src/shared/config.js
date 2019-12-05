@@ -2,7 +2,7 @@ const path = require("path");
 
 // Import the user's configuration at compile time.
 // To use a different file, fill config.js with `module.exports = require("path/to/configuration/file")`
-const userConfig = require("./userconfig/config");
+const userConfig = require("config/config");
 
 // Warn about deprecated options
 const deprecatedOptions = ["kioskmode"];
