@@ -28,8 +28,9 @@
   "homepage": "https://magicmirror.builders",
   "devDependencies": {},
   "dependencies": {
-    "magicmirrorx": "*",
+    "mm-utils": "*",
     "mm-scripts": "*",
+    "nanoid": "^2.1.7",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "roboto-fontface": "^0.10.0"

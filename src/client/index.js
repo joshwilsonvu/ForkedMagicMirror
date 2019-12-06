@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {MagicMirror} from 'magicmirrorx';
+//import {MagicMirror} from 'mm-utils';
+import MagicMirror from "./core/magic-mirror";
 import config from '../config/config';
 
 // make CSS globally available
