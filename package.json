@@ -28,12 +28,14 @@
   "homepage": "https://magicmirror.builders",
   "devDependencies": {},
   "dependencies": {
-    "mm-utils": "*",
     "mm-scripts": "*",
     "nanoid": "^2.1.7",
+    "nunjucks": "^3.2.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "roboto-fontface": "^0.10.0"
+    "react-transition-group": "^4.3.0",
+    "roboto-fontface": "^0.10.0",
+    "semver": "^6.3.0"
   },
   "browserslist": {
     "production": [

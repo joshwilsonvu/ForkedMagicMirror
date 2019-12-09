@@ -1,8 +1,9 @@
 import {CSSTransition} from "react-transition-group";
-import React, {useMemo, useEffect} from "react";
+import React from "react";
 import "./fade.css";
 
 const defaultRegions = {
+  "undefined": [],
   "top_bar": [],
   "top_left": [],
   "top_center": [],
@@ -26,7 +27,7 @@ const getRegions = modules => {
     if (typeof module !== "object") {
       throw new Error(`Expected a config object, got ${module}.`);
     }
-    if (!regions.hasOwnProperty(module.position)) {
+    if (!defaultRegions.hasOwnProperty(module.position)) {
       throw new Error(`Invalid position: ${module.position}`);
     }
     const { Component, speed, ...rest } = module;
