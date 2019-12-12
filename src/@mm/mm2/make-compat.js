@@ -29,17 +29,23 @@ const Escape = ({ dom, className }) => {
   return (<div ref={div} className={className}/>);
 };
 
-const useCompat = () => {
 
-};
 
 const makeCompat = (MM2, name) => {
+  const useMM2Instance = (MM) => {
+    const mm2 = useRef(null);
+    useEffect(() => {
+      mm2.current = new MM2();
+
+    }, []);
+  };
   // Create a React component wrapping the given subclass
   const Compat = props => {
     const { identifier, hidden, classes, header, position, config, duration } = props;
     const data = { identifier, name, classes, header, position, config };
 
     const MM = useMM(identifier);
+    const [dom, setDom] = useState(() => mm2.current.getDom());
     const mm2 = useRef(null);
     const ref = useRef(null);
     // Set data, initialize, and start on mount
@@ -49,18 +55,19 @@ const makeCompat = (MM2, name) => {
     useEffect(() => {
       // run this effect only once, to initialize everything
       const m = mm2.current = new MM2();
+      m.MM = MM;
       if (m.requiresVersion && !semver.gt(m.requiresVersion, config.version)) {
         throw new Error(
           `Module ${name} requires MM version ${m.requiresVersion}, running ${config.version}`
         );
       }
       m.setData(data);
-      m.MM = MM;
-      m.init();
       m.loaded(() => null); // no longer required to call callback
+      m.init();
       // FIXME: possible breakage, potentially calling start() before all modules loaded
       // MM.on('load or something', () => {
       m.start();
+
       // });
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
     useEffect(() => {
@@ -69,8 +76,6 @@ const makeCompat = (MM2, name) => {
       l.setData(data); // FIXME: inefficient
     });
 
-
-    const [dom, setDom] = useState(() => mm2.getDom());
     MM.on("updateDom", () => setDom(mm2.getDom())); // TODO: make real API
     return (
       <div

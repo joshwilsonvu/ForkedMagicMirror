@@ -31,9 +31,23 @@ export const MMProvider = ({dispatch, children}) => {
   return <MMContext.Provider value={dispatch} children={children}/>;
 };
 
-const useMM = identifier => {
+const useMM = (identifier, overrideFunction) => {
   const dispatch = useContext(MMContext);
-  return useMemo(() => new MMClass(identifier, dispatch), [identifier, dispatch]);
+  const actions = useMemo(() => ({
+    updateDom(_, speed) {
+      dispatch({type: 'UPDATE_DOM', identifier, speed});
+    },
+    sendNotification(notification, payload, module) {
+      dispatch({type: 'SEND_NOTIFICATION', identifier, notification, payload, module});
+    },
+    hideModule(_, speed, cb) {
+      dispatch({type: 'HIDE_MODULE', identifier, speed, cb});
+    },
+    showModule(identifier, _, speed, cb, options) {
+      dispatch({type: 'SHOW_MODULE', identifier, speed, cb, options});
+    },
+  }), [identifier, dispatch]);
+  return actions;
 };
 
 export default useMM;
