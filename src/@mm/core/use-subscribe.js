@@ -1,51 +1,91 @@
-import React, { createContext, useState, useEffect, useContext, useCallback } from "react";
-import Emitter from "tiny-emitter";
+import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import mitt from 'mitt';
 
 const PubSubContext = createContext(null);
 
-/*
- * To subscribe to a notification, call this hook with the name of the notification
- * to subscribe to and the function to be called when the notification comes in.
- *     useSubscribe("ALL_MODULES_LOADED", () => console.log("Loaded!"));
- */
-export const useSubscribe = (event, subscriber, Context = PubSubContext) => {
-  const pubsub = useContext(Context);
-  useEffect(() => {
-    if (event && subscriber) {
-      pubsub.on(event, subscriber);
-      return () => pubsub.off(event, subscriber);
-    }
-  }, [event, subscriber, pubsub]);
-};
+// Creates Provider, useSubscribe, and usePublish that use the given context. Useful for separate "rooms".
+export const createPubSub = Context => {
+  const destinationKey = Symbol("destination");
 
-/*
- * To emit, use the return value of this hook in a useEffect() block.
- * It's not a good idea to call it in the render phase.
- *     const publish = usePublish();
- *     useEffect(() => fetch(something).then(content => publish("FETCHED", content)), [something]);
- */
-export const usePublish = (Context = PubSubContext) => {
-  const pubsub = useContext(Context);
-  const [emitArgs, setEmitArgs] = useState(null);
-  useEffect(() => {
-    if (emitArgs) {
-      if (typeof emitArgs[0] !== "string") {
-        throw new TypeError(`Expected event name to be a string, got ${typeof emitArgs[0]}`);
-      }
-      // ensure emit only once with useEffect
-      pubsub.emit(...emitArgs);
-      setEmitArgs(null);
-    }
-  }, [emitArgs]);
-  // return value of hook acts as emit function
-  return useCallback((...args) => setEmitArgs(args), []);
-};
-
-export const createPubSubProvider = Context => {
-  return props => {
-    const [emitter] = useState(() => new Emitter());
-    return <Context.Provider value={emitter} {...props} />
+  function Provider(props) {
+    const emitter = useState(mitt)[0];
+    return <Context.Provider value={emitter} {...props} />;
   }
+
+  /*
+   * To subscribe to a notification, call this hook with the name of the notification
+   * to subscribe to and the function to be called when the notification comes in.
+   *     useSubscribe("ALL_MODULES_LOADED", payload => console.log("Loaded!"));
+   *
+   * Listen to all events with
+   *     useSubscribe("*", (payload, event) => console.log("Received event " + event));
+   *
+   * If an optional third argument is supplied with a unique identifier, events from
+   * usePublish(_, _, destination) will only reach subscribers with a matching identifier.
+   *     useSubscribe("UPDATE", payload => console.log("Updated!"), "foo");
+   *     ...
+   *     const publish = usePublish();
+   *     publish("UPDATE", {}, "foo");
+   */
+  function useSubscribe(event, subscriber, identity) {
+    const emitter = useContext(Context);
+    subscriber = useMemo(() => {
+      let s = subscriber;
+      if (s) {
+        // change argument order to keep payload first when the event is a catch-all
+        if (event === "*") {
+          s = (type, payload, ...rest) => s(payload, type, ...rest);
+        }
+        // when the payload contains a destination, only call the subscriber if identity matches
+        if (identity) {
+          s = (payload, ...rest) => {
+            if (!payload[destinationKey] || payload[destinationKey] === identity) {
+              s(payload, ...rest);
+            }
+          }
+        }
+      }
+      return s;
+    }, [subscriber, event, identity]);
+    useEffect(() => {
+      if (event && subscriber) {
+        emitter.on(event, subscriber);
+        return () => emitter.off(event, subscriber);
+      }
+    }, [event, subscriber, emitter]);
+  }
+
+  /*
+   * To emit, use the return value of this hook in a useEffect() block or event handler.
+   * It's not a good idea to call it in the render phase as it could be called more than once.
+   *     const publish = usePublish();
+   *     useEffect(() => fetch(something).then(content => publish("FETCHED", content)), [something]);
+   * To publish to a specific listener,
+   *     publish("FETCHED", payload, destination) // "foo"
+   */
+  function usePublish() {
+    const emitter = useContext(Context);
+    // return value of hook acts as emit function
+    return useCallback(
+      (event, payload, destination) => // ensure emit only once with useEffect
+        emitter.emit(event, {
+          ...payload,
+          ...(destination && { [destinationKey]: destination })
+        }),
+      [emitter]
+    );
+  }
+
+  return {
+    Provider,
+    useSubscribe,
+    usePublish,
+  };
 };
 
-export const NotificationProvider = createPubSubProvider(PubSubContext)
+const { Provider, useSubscribe, usePublish } = createPubSub(PubSubContext);
+export {
+  Provider,
+  useSubscribe,
+  usePublish
+}

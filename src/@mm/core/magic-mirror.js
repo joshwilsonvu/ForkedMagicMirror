@@ -2,74 +2,81 @@
  * This component implements the MagicMirror
  */
 
-import React, { useReducer } from "react";
-import { createStore } from "redux";
-import { Provider, useSelector } from "react-redux";
-import emitter from "tiny-emitter/instance";
-import nanoid from "nanoid";
-import { TransitionGroup } from "react-transition-group";
-import { MMProvider } from "./use-mm";
-import { NotificationProvider } from "./use-subscribe";
-import getRegions from "./get-regions";
+import React, { useState } from 'react';
+import { createStore } from 'redux';
+import { Provider, useSelector } from 'react-redux';
+import nanoid from 'nanoid';
+import { TransitionGroup } from 'react-transition-group';
+import { List, Map, fromJS } from 'immutable';
+import { Provider as NotificationProvider } from './use-subscribe';
+import getRegions from './get-regions';
 
 
-
-const MMReducer = (modules = [], { type, ...payload }) => {
+const MMReducer = (state, { type, ...payload }) => {
+  if (typeof state === "undefined") {
+    return MMInit
+  }
   switch (type) {
-    // TODO
+    case 'HIDE_MODULE':
+      return hideModule(true, state, payload)
     default:
-      return modules;
+      return state;
   }
 };
+
+function hideModule(hidden, state, payload) {
+  const { identifier, speed, cb, options } = payload;
+  return state.update(
+    'modules',
+    modules => modules.update(
+      modules.findIndex(m => m.identifier === identifier),
+      m => m.merge({ hidden, speed }),
+    ),
+  );
+}
 
 const MMInit = ({ children, config }) => {
   if (children) {
 
   }
 
-  return config.modules.map(({ module, position, classes, header, disabled, config, _import }, i) => {
-    if (_import) {
-      return !disabled ? {
-        hidden: false,
-        speed: 1000,
-        identifier: `m${nanoid(10)}`, // unique identifier for each module
-        Component: React.lazy(_import), // _import is () => import("module")
-        name: module,
-        position,
-        classes,
-        header,
-        config
-      } : false;
-    } else {
-      throw new Error(`Babel loader not working for ${module}.`);
-    }
-  }).filter(Boolean);
-};
-
-const store = createStore(MMReducer);
-
-const MagicMirror = ({ m, children, config }) => {
-  // config is only initial arg, changing props doesn't do anything
-  return (
-    <Provider store={store}>
-      <NotificationProvider>
-        <MMLayout />
-      </NotificationProvider>
-    </Provider>
-  );
+  return fromJS({
+    modules: config.modules.map(({ module, position, classes, header, disabled, config, _import }, i) => {
+      if (_import) {
+        return !disabled ? {
+          hidden: false,
+          speed: 1000,
+          identifier: `m${nanoid(10)}`, // unique identifier for each module
+          Component: React.lazy(_import), // _import is () => import("module")
+          name: module,
+          position,
+          classes,
+          header,
+          config,
+        } : false;
+      } else {
+        throw new Error(`Babel loader not working for ${module}.`);
+      }
+    }).filter(Boolean),
+  });
 };
 
 
-const MMLayout = () => {
-  const modules = useSelector(s => s.modules);
+
+
+
+const useModules = () => useSelector(state => state.get("modules"));
+
+function MMLayout() {
+  const modules = useModules();
   const {
     undefined: region_undefined, fullscreen_below, top_bar, top_left, top_center, top_right, upper_third, middle_center,
-    lower_third, bottom_bar, bottom_left, bottom_center, bottom_right, fullscreen_above
+    lower_third, bottom_bar, bottom_left, bottom_center, bottom_right, fullscreen_above,
   } = getRegions(modules);
 
   return (
     <React.Suspense fallback={<div>Loading...</div>}>
-      <div style={{display: "none"}}>{region_undefined}</div>
+      <div style={{ display: 'none' }}>{region_undefined}</div>
       <div className="region fullscreen below">
         <TransitionGroup className="container">{fullscreen_below}</TransitionGroup>
       </div>
@@ -92,7 +99,7 @@ const MMLayout = () => {
         <TransitionGroup className="container">{middle_center}</TransitionGroup>
       </div>
       <div className="region lower third">
-        <TransitionGroup className="container"><br/>{lower_third}</TransitionGroup>
+        <br/><TransitionGroup className="container">{lower_third}</TransitionGroup>
       </div>
       <div className="region bottom bar">
         <TransitionGroup className="container">{bottom_bar}</TransitionGroup>
@@ -111,6 +118,18 @@ const MMLayout = () => {
       </div>
     </React.Suspense>
   );
-};
+}
+
+function MagicMirror({ m, children, config }) {
+  // config is only initial arg, changing props doesn't do anything
+  const store = useState(() => createStore(MMReducer, MMInit({children, config})))[0];
+  return (
+    <Provider store={store}>
+      <NotificationProvider>
+        <MMLayout/>
+      </NotificationProvider>
+    </Provider>
+  );
+}
 
 export default MagicMirror;

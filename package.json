@@ -28,6 +28,8 @@
   "homepage": "https://magicmirror.builders",
   "devDependencies": {},
   "dependencies": {
+    "immutable": "^4.0.0-rc.12",
+    "mitt": "^1.2.0",
     "mm-scripts": "*",
     "nanoid": "^2.1.7",
     "nunjucks": "^3.2.0",
@@ -37,8 +39,7 @@
     "react-transition-group": "^4.3.0",
     "redux": "^4.0.4",
     "roboto-fontface": "^0.10.0",
-    "semver": "^6.3.0",
-    "tiny-emitter": "^2.1.0"
+    "semver": "^6.3.0"
   },
   "browserslist": {
     "production": [

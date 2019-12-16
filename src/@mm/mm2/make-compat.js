@@ -1,76 +1,50 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { useMM, ModuleGuard } from "@mm/core";
+import React, { useState, useRef, useEffect, useLayoutEffect, useImperativeHandle, forwardRef } from "react";
+import { useMM2, ModuleGuard } from "@mm/core";
 import semver from "semver";
+import { useSubscribe } from '@mm/core/use-subscribe';
 
-const usePrevious = value => {
-  const ref = useRef(null);
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  return ref.current;
+const useUpdateDom = (ref, mm2) => {
+  const [dom, setDom] = useState(() => mm2.getDom());
+  useImperativeHandle(ref, () => ({
+    updateDom() {
+      setDom(mm2.getDom());
+    }
+  }), [mm2]);
+  return dom;
 };
-
-// An escape hatch from React. Pass the dom prop to imperatively add HTMLElements.
-const Escape = ({ dom, className }) => {
-  const div = useRef(null);
-  const oldDom = usePrevious(dom);
-  // add/replace/remove dom content
-  useLayoutEffect(() => {
-    if (dom && oldDom && dom !== oldDom) {
-      div.current.replaceChild(dom, oldDom);
-    } else if (dom && !oldDom) {
-      div.current.appendChild(dom);
-    } else if (!dom && oldDom) {
-      div.current.removeChild(oldDom);
-    } // else do nothing
-  }, [dom, oldDom]);
-  // cleanup on unmount
-  useLayoutEffect(() => () => div.current.firstChild && div.current.removeChild(div.current.firstChild), []);
-  return (<div ref={div} className={className}/>);
-};
-
-
 
 const makeCompat = (MM2, name) => {
-  const useMM2Instance = () => useState(() => new MM2())[0];
+  const useMM2Instance = (MMGlobal) => useState(() => new MM2(MMGlobal))[0];
   // Create a React component wrapping the given subclass
-  const Compat = props => {
+  const Compat = forwardRef((props, ref) => {
     const { identifier, hidden, classes, header, position, config, duration } = props;
     const data = { identifier, name, classes, header, position, config };
 
-    const MM = useMM(identifier);
-    const [dom, setDom] = useState(() => mm2.current.getDom());
+    const MM = useMM2(identifier);
     const mm2 = useMM2Instance();
-    const ref = useRef(null);
+    const [dom, setDom] = useState(() => mm2.getDom());
+
+    //const ref = useRef(null);
     // Set data, initialize, and start on mount
     useEffect(() => {
-      mm2.current && mm2.current.setData(data);
-    });
-    useEffect(() => {
       // run this effect only once, to initialize everything
-      const m = mm2.current = new MM2();
-      m.MM = MM;
-      if (m.requiresVersion && !semver.gt(m.requiresVersion, config.version)) {
+      mm2.MM = MM;
+      if (mm2.requiresVersion && !semver.gt(mm2.requiresVersion, config.version)) {
         throw new Error(
-          `Module ${name} requires MM version ${m.requiresVersion}, running ${config.version}`
+          `Module ${name} requires MM version ${mm2.requiresVersion}, running ${config.version}`
         );
       }
-      m.setData(data);
-      m.loaded(() => null); // no longer required to call callback
-      m.init();
-      // FIXME: possible breakage, potentially calling start() before all modules loaded
-      // MM.on('load or something', () => {
-      m.start();
-
-      // });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+      mm2.setData(data);
+      mm2.loaded(() => null); // no longer required to call callback
+      mm2.init();
+    }, [mm2]); // eslint-disable-line react-hooks/exhaustive-deps
+    useSubscribe("ALL_MODULES_LOADED", () => mm2.start());
+    useSubscribe("UPDATE_DOM", () => setDom(mm2.getDom()), identifier);
     useEffect(() => {
-      const l = mm2.current;
-      l.hidden = hidden;
-      l.setData(data); // FIXME: inefficient
+      mm2.hidden = hidden;
+      mm2.setData(data); // FIXME: inefficient
     });
 
-    MM.on("updateDom", () => setDom(mm2.getDom())); // TODO: make real API
     return (
       <div
         id={identifier}
@@ -82,14 +56,13 @@ const makeCompat = (MM2, name) => {
         )}
         <ModuleGuard name={name}>
           <Escape
-            ref={ref}
             className="module-content"
             dom={dom}
           />
         </ModuleGuard>
       </div>
     );
-  };
+  });
 
   // Assign correct .name property to make development easier
   Object.defineProperty(Compat, "name", {
@@ -99,5 +72,34 @@ const makeCompat = (MM2, name) => {
 
   return Compat;
 };
+
+const useLayoutPrevious = value => {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
+};
+
+// An escape hatch from React. Pass the dom prop to imperatively add HTMLElements.
+function Escape({ dom, ...rest }) {
+  const div = useRef(null);
+  const oldDom = useLayoutPrevious(dom);
+  // add/replace/remove dom content
+  useLayoutEffect(() => replace(div.current, oldDom, dom), [dom, oldDom]);
+  // cleanup on unmount
+  useLayoutEffect(() => () => replace(div.current, div.current.firstChild, null), []);
+  return (<div ref={div} {...rest}/>);
+}
+
+function replace(parent, oldDom, newDom) {
+  if (oldDom && newDom) {
+    parent.replaceChild(newDom, oldDom);
+  } else if (newDom && !oldDom) {
+    parent.appendChild(newDom);
+  } else if (!newDom && oldDom) {
+    parent.removeChild(oldDom);
+  } // else do nothing
+}
 
 export default makeCompat;

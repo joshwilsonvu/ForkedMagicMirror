@@ -1,24 +1,33 @@
-import React, { useContext, useMemo, useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector, useStore } from "react-redux";
-import nanoid from "nanoid";
-import { usePublish, useSubscribe } from "./use-subscribe";
-
-const MMContext = React.createContext(null);
+import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { usePublish } from './use-subscribe';
 
 // Expose a backwards-compatible hook version of the global MM variable
-const useMM = () => {
+export const useMM = ({ includeDeprecated }) => {
   const modules = useSelector(s => s.modules);
   const dispatch = useDispatch();
   const publish = usePublish();
 
-  return useMemo(() => ({
-    sendNotification: publish,
-    updateDom: (module, speed) => dispatch({ type: "UPDATE_DOM", identifier: module.identifier, speed }),
-    getModules: () => setSelectionMethodsForModules(modules),
-    hideModule: (module, speed, cb, options) => dispatch({ type: "HIDE_MODULE", identifier: module.identifier, speed, cb, options }),
-    showModule: (module, speed, cb, options) => dispatch({ type: "SHOW_MODULE", identifier: module.identifier, speed, cb, options })
-  }), [modules, dispatch, publish]);
+  return useMemo(() => {
+    const selectionMethodsModules = setSelectionMethodsForModules(modules);
+    return {
+      sendNotification: publish,
+      getModules: () => selectionMethodsModules,
+      hideModule: (module, speed, cb, options) => {
+        dispatch({ type: 'HIDE_MODULE', identifier: module.identifier, speed, cb, options });
+      },
+      showModule: (module, speed, cb, options) => {
+        dispatch({ type: 'SHOW_MODULE', identifier: module.identifier, speed, cb, options });
+      },
+      // add the following properties if includeDeprecated is truthy
+      ...(includeDeprecated && {
+        updateDom: (module, speed) => publish("UPDATE_DOM", { speed }, module.identifier),
+      })
+    };
+  }, [modules, includeDeprecated, dispatch, publish]);
 };
+
+export const useMM2 = () => useMM({includeDeprecated: true});
 
 /*const useCompat = () => {
   const { dispatch } = useContext(MMContext);
@@ -28,13 +37,8 @@ const useMM = () => {
   const [speed, setSpeed] = useState(1000);
 };*/
 
-/* setSelectionMethodsForModules()
-	 * Adds special selectors on a collection of modules.
-	 *
-	 * argument modules array - Array of modules.
-	 */
 function setSelectionMethodsForModules(modules) {
-  return Object.assign(modules, selectionMethods);
+  return Object.assign([...modules], selectionMethods);
 }
 
 const selectionMethods = {
@@ -70,12 +74,12 @@ const selectionMethods = {
    */
   modulesByClass(className, include) {
     let searchClasses = className;
-    if (typeof className === "string") {
-      searchClasses = className.split(" ");
+    if (typeof className === 'string') {
+      searchClasses = className.split(' ');
     }
 
     let newModules = this.filter(function(module) {
-      let classes = module.data.classes.toLowerCase().split(" ");
+      let classes = module.data.classes.toLowerCase().split(' ');
 
       for (let searchClass of searchClasses) {
         if (classes.indexOf(searchClass.toLowerCase()) !== -1) {
@@ -112,10 +116,6 @@ const selectionMethods = {
    * argument callback function - The function to execute with the module as an argument.
    */
   enumerate(callback) {
-    this.map(function(module) {
-      callback(module);
-    });
-  }
+    this.forEach(callback);
+  },
 };
-
-export default useMM;
