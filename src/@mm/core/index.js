@@ -1,6 +1,6 @@
 import MagicMirror from './magic-mirror';
 import ModuleGuard from './module-guard';
-import useMM from './useMM';
+import useMM from './use-mm';
 
 export {
   MagicMirror,

@@ -3,10 +3,16 @@
  */
 
 import React, { useReducer } from "react";
+import { createStore } from "redux";
+import { Provider, useSelector } from "react-redux";
+import emitter from "tiny-emitter/instance";
 import nanoid from "nanoid";
 import { TransitionGroup } from "react-transition-group";
-import { MMProvider } from "./useMM";
+import { MMProvider } from "./use-mm";
+import { NotificationProvider } from "./use-subscribe";
 import getRegions from "./get-regions";
+
+
 
 const MMReducer = (modules = [], { type, ...payload }) => {
   switch (type) {
@@ -40,18 +46,22 @@ const MMInit = ({ children, config }) => {
   }).filter(Boolean);
 };
 
+const store = createStore(MMReducer);
+
 const MagicMirror = ({ m, children, config }) => {
   // config is only initial arg, changing props doesn't do anything
-  const [modules, dispatch] = useReducer(MMReducer, { children, config }, MMInit);
   return (
-    <MMProvider dispatch={dispatch}>
-      <MMLayout modules={modules}/>
-    </MMProvider>
+    <Provider store={store}>
+      <NotificationProvider>
+        <MMLayout />
+      </NotificationProvider>
+    </Provider>
   );
 };
 
 
-const MMLayout = ({ modules }) => {
+const MMLayout = () => {
+  const modules = useSelector(s => s.modules);
   const {
     undefined: region_undefined, fullscreen_below, top_bar, top_left, top_center, top_right, upper_third, middle_center,
     lower_third, bottom_bar, bottom_left, bottom_center, bottom_right, fullscreen_above

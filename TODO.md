@@ -18,8 +18,16 @@
   * Self host in production if not `serve` or `view`: https://stackoverflow.com/a/43423171/7619380
   * Programmatically run `react-scripts` and `electron` concurrently in development
 
-* Try forking react-scripts, adding a
-    custom loader, and *maybe* working with the `module.hot` API. This
-    would get rid of the messiness of watching files and running a separate
-    process.
-    
+* API to support:
+  * `MM.sendNotification(notification, payload, sender)`
+  * `MM.updateDom(module: Module, speed)`
+  * `MM.getModules()`
+  * `MM.hideModule(module: Module, speed, callback, {lockString, force})`
+  * `MM.showModule(module: Module, speed, callback, {lockString, force})`
+  * 
+  ```javascript
+    interface Module {
+      
+    }
+  ```
+}

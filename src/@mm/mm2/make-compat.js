@@ -32,13 +32,7 @@ const Escape = ({ dom, className }) => {
 
 
 const makeCompat = (MM2, name) => {
-  const useMM2Instance = (MM) => {
-    const mm2 = useRef(null);
-    useEffect(() => {
-      mm2.current = new MM2();
-
-    }, []);
-  };
+  const useMM2Instance = () => useState(() => new MM2())[0];
   // Create a React component wrapping the given subclass
   const Compat = props => {
     const { identifier, hidden, classes, header, position, config, duration } = props;
@@ -46,7 +40,7 @@ const makeCompat = (MM2, name) => {
 
     const MM = useMM(identifier);
     const [dom, setDom] = useState(() => mm2.current.getDom());
-    const mm2 = useRef(null);
+    const mm2 = useMM2Instance();
     const ref = useRef(null);
     // Set data, initialize, and start on mount
     useEffect(() => {
