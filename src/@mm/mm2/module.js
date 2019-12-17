@@ -33,13 +33,7 @@ const socketMap = new WeakMap();
 };*/
 
 export default class Module {
-  constructor(data) {
-    this.data = data;
-    this.name = data.name || '';
-    this.identifier = data.identifier || '';
-    this.hidden = false;
-    this.setConfig(data.config || {});
-  }
+
 
   /* All methods (and properties below can be overridden. */
 
@@ -152,6 +146,14 @@ export default class Module {
   // Called when a module is shown.
   resume() {
     console.log(`${this.name} is resumed.`);
+  }
+
+  setData(data) {
+    this.data = data;
+    this.name = data.name || '';
+    this.identifier = data.identifier || '';
+    this.hidden = false;
+    this.setConfig(data.config || {});
   }
 
   // Set the module config and combine it with the module defaults.

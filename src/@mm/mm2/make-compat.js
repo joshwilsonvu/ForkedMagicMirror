@@ -13,15 +13,19 @@ const useUpdateDom = (ref, mm2) => {
   return dom;
 };
 
-const makeCompat = (MM2, name) => {
-  const useMM2Instance = (MMGlobal) => useState(() => new MM2(MMGlobal))[0];
+const makeCompat = (MM2, name, globalConfig) => {
+  const useMM2Instance = (data) => useState(() => {
+    const mm2 = new MM2();
+    mm2.setData(data);
+    return mm2;
+  })[0];
   // Create a React component wrapping the given subclass
   const Compat = forwardRef((props, ref) => {
     const { identifier, hidden, classes, header, position, config, duration } = props;
     const data = { identifier, name, classes, header, position, config };
 
     const MM = useMM2(identifier);
-    const mm2 = useMM2Instance();
+    const mm2 = useMM2Instance(data);
     const [dom, setDom] = useState(() => mm2.getDom());
 
     //const ref = useRef(null);
@@ -29,17 +33,17 @@ const makeCompat = (MM2, name) => {
     useEffect(() => {
       // run this effect only once, to initialize everything
       mm2.MM = MM;
-      if (mm2.requiresVersion && !semver.gt(mm2.requiresVersion, config.version)) {
+      if (mm2.requiresVersion && globalConfig.version && !semver.gt(mm2.requiresVersion, globalConfig.version)) {
         throw new Error(
-          `Module ${name} requires MM version ${mm2.requiresVersion}, running ${config.version}`
+          `Module ${name} requires MM version ${mm2.requiresVersion}, running ${globalConfig.version}`
         );
       }
-      mm2.setData(data);
       mm2.loaded(() => null); // no longer required to call callback
       mm2.init();
+      mm2.getDom().then(d => setDom(d));
     }, [mm2]); // eslint-disable-line react-hooks/exhaustive-deps
     useSubscribe("ALL_MODULES_LOADED", () => mm2.start());
-    useSubscribe("UPDATE_DOM", () => setDom(mm2.getDom()), identifier);
+    useSubscribe("UPDATE_DOM", () => mm2.getDom().then(d => setDom(d)), identifier);
     useEffect(() => {
       mm2.hidden = hidden;
       mm2.setData(data); // FIXME: inefficient

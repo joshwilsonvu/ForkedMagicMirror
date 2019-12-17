@@ -15,5 +15,5 @@ export default (js, name, config) => {
   new Function(...Object.keys(globals), js)(...Object.values(globals));
 
   Module._setDefinition = null; // unpatch
-  return definition ? makeCompat(definition, name) : null
+  return definition ? makeCompat(definition, name, config) : null
 };
