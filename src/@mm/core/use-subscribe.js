@@ -67,11 +67,15 @@ export const createPubSub = Context => {
     const emitter = useContext(Context);
     // return value of hook acts as emit function
     return useCallback(
-      (event, payload, destination) => // ensure emit only once with useEffect
+      (event, payload, destination) => {
+        if (typeof payload !== "object") {
+          payload = [payload]
+        }
         emitter.emit(event, {
           ...payload,
           ...(destination && { [destinationKey]: destination })
-        }),
+        })
+      },
       [emitter]
     );
   }

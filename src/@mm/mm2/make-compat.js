@@ -3,16 +3,6 @@ import { useMM2, ModuleGuard } from "@mm/core";
 import semver from "semver";
 import { useSubscribe } from '@mm/core/use-subscribe';
 
-const useUpdateDom = (ref, mm2) => {
-  const [dom, setDom] = useState(() => mm2.getDom());
-  useImperativeHandle(ref, () => ({
-    updateDom() {
-      setDom(mm2.getDom());
-    }
-  }), [mm2]);
-  return dom;
-};
-
 const makeCompat = (MM2, name, globalConfig) => {
   const useMM2Instance = (data) => useState(() => {
     const mm2 = new MM2();
@@ -21,7 +11,7 @@ const makeCompat = (MM2, name, globalConfig) => {
   })[0];
   // Create a React component wrapping the given subclass
   const Compat = forwardRef((props, ref) => {
-    const { identifier, hidden, classes, header, position, config, duration } = props;
+    const { identifier, hidden, classes, header, position, config } = props;
     const data = { identifier, name, classes, header, position, config };
 
     const MM = useMM2(identifier);
@@ -43,7 +33,7 @@ const makeCompat = (MM2, name, globalConfig) => {
       mm2.getDom().then(d => setDom(d));
     }, [mm2]); // eslint-disable-line react-hooks/exhaustive-deps
     useSubscribe("ALL_MODULES_LOADED", () => mm2.start());
-    useSubscribe("UPDATE_DOM", () => mm2.getDom().then(d => setDom(d)), identifier);
+    useSubscribe("UPDATE_DOM", payload => mm2.getDom().then(d => setDom(d)), identifier);
     useEffect(() => {
       mm2.hidden = hidden;
       mm2.setData(data); // FIXME: inefficient
@@ -53,7 +43,6 @@ const makeCompat = (MM2, name, globalConfig) => {
       <div
         id={identifier}
         className={data.classes}
-        style={{ transitionDuration: duration }}
       >
         {typeof header !== "undefined" && header !== "" && (
           <header className="module-header" dangerouslySetInnerHTML={header}/>

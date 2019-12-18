@@ -8,7 +8,7 @@ export default () => {
     return () => clearInterval(id);
   }, []);
   return (
-    <Fader speed={200}>
+    <Fader speed={400}>
       {count % 5 !== 0 ? (
         <div>
           {count}
