@@ -7,13 +7,9 @@ export default () => {
     const id = setInterval(() => setCount(c => c + 1), 800);
     return () => clearInterval(id);
   }, []);
-  return (
-    <Fader speed={200}>
-      {count % 5 !== 0 ? (
-        <div>
-          {count}
-        </div>
-      ) : null}
-    </Fader>
-  );
+  return count % 5 !== 0 ? (
+    <div>
+      {count}
+    </div>
+  ) : null;
 }

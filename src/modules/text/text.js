@@ -8,10 +8,8 @@ export default ({ text }) => {
     return () => clearInterval(id);
   }, []);
   return (
-    <Fader speed={2000}>
-      <div>
-        {toggle ? 'Hi' : ''}
-      </div>
-    </Fader>
+    <div>
+      {toggle ? 'Hi there' : 'Hello there!'}
+    </div>
   );
 }
