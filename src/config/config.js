@@ -43,7 +43,7 @@ var config = {
 		{
 			module: "clock",
 			position: "top_left",
-			disabled: true
+			disabled: false
 		},
 		{
 			module: "text",

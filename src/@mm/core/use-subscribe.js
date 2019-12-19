@@ -1,12 +1,12 @@
-import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useRef } from 'react';
 import mitt from 'mitt';
 
 const PubSubContext = createContext(null);
+const defaultKey = Symbol("default");
+const destinationKey = Symbol("destination");
 
 // Creates Provider, useSubscribe, and usePublish that use the given context. Useful for separate "rooms".
 export const createPubSub = Context => {
-  const destinationKey = Symbol("destination");
-
   function Provider(props) {
     const emitter = useState(mitt)[0];
     return <Context.Provider value={emitter} {...props} />;
@@ -29,30 +29,28 @@ export const createPubSub = Context => {
    */
   function useSubscribe(event, subscriber, identity) {
     const emitter = useContext(Context);
-    subscriber = useMemo(() => {
-      let s = subscriber;
-      if (s) {
+    const subscriberRef = useRef(null);
+    subscriberRef.current = subscriber;
+    useEffect(() => {
+      function cb(type, payload) {
         // change argument order to keep payload first when the event is a catch-all
-        if (event === "*") {
-          s = (type, payload, ...rest) => s(payload, type, ...rest);
+        if (typeof payload === "undefined") {
+          payload = type;
+          type = undefined;
         }
         // when the payload contains a destination, only call the subscriber if identity matches
-        if (identity) {
-          s = (payload, ...rest) => {
-            if (!payload[destinationKey] || payload[destinationKey] === identity) {
-              s(payload, ...rest);
-            }
+        if (!identity || !payload[destinationKey] || payload[destinationKey] === identity) {
+          // extract the payload from the object if it was wrapped
+          if (payload[defaultKey]) {
+            payload = payload[defaultKey];
           }
+          subscriberRef.current && subscriberRef.current(payload, type);
         }
       }
-      return s;
-    }, [subscriber, event, identity]);
-    useEffect(() => {
-      if (event && subscriber) {
-        emitter.on(event, subscriber);
-        return () => emitter.off(event, subscriber);
-      }
-    }, [event, subscriber, emitter]);
+
+      emitter.on(event, cb);
+      return () => emitter.off(event, cb);
+    }, [event, identity, emitter]);
   }
 
   /*
@@ -68,8 +66,9 @@ export const createPubSub = Context => {
     // return value of hook acts as emit function
     return useCallback(
       (event, payload, destination) => {
+        // wrap payload in an object if it's not already an object
         if (typeof payload !== "object") {
-          payload = [payload]
+          payload = { [defaultKey]: payload };
         }
         emitter.emit(event, {
           ...payload,
