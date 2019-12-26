@@ -17,13 +17,16 @@
     "mirror UI",
     "modular"
   ],
-  "author": "Michael Teeuw",
+  "authors": [
+    "Michael Teeuw",
+    "Josh Wilson"
+  ],
   "contributors": [
-    "https://github.com/MichMich/MagicMirror/graphs/contributors"
+    "https://github.com/joshwilsonvu/MagicMirror/graphs/contributors"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MichMich/MagicMirror/issues"
+    "url": "https://github.com/joshwilsonvu/MagicMirror/issues"
   },
   "homepage": "https://magicmirror.builders",
   "devDependencies": {},

@@ -425,7 +425,7 @@ A huge, huge, huge thanks to user @fewieden for all his hard work on the new `we
 - Bug of duplicated compliments as described in [here](https://forum.magicmirror.builders/topic/2381/compliments-module-stops-cycling-compliments).
 - Fix double message about port when server is starting
 - Corrected Swedish translations for TODAY/TOMORROW/DAYAFTERTOMORROW.
-- Removed unused import from js/electron.js
+- Removed unused import from js/index.js
 - Made calendar.js respect config.timeFormat irrespective of locale setting.
 - Fixed alignment of analog clock when a large calendar is displayed in the same side bar.
 

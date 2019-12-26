@@ -10,10 +10,9 @@ lib-cov
 coverage
 .grunt
 .lock-wscript
-build/Release
-/node_modules/**/*
-fonts/node_modules/**/*
-vendor/node_modules/**/*
+build
+dist
+node_modules
 jspm_modules
 .npm
 .node_repl_history
@@ -69,6 +68,8 @@ Temporary Items
 /modules/**
 !/modules/default
 !/modules/default/**
+!/modules/legacy
+!/modules/legacy/**
 !/modules/README.md**
 
 # Ignore changes to the custom css files.
@@ -84,4 +85,4 @@ Temporary Items
 *.rej
 *.bak
 
-!/tests/node_modules/**/*
+!/.old/tests/node_modules/**/*
