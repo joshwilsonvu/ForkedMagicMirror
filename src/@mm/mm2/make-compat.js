@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect, useLayoutEffect, useImperativeHandle, forwardRef } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, forwardRef } from "react";
 import { useMM2, ModuleGuard } from "@mm/core";
 import semver from "semver";
-import { useSubscribe } from '@mm/core/use-subscribe';
+import { useSubscribe } from "@mm/core/use-subscribe";
+import { isElement } from "./isDom";
 
 const makeCompat = (MM2, name, globalConfig) => {
   const useMM2Instance = (data) => useState(() => {
@@ -16,7 +17,14 @@ const makeCompat = (MM2, name, globalConfig) => {
 
     const MM = useMM2(identifier);
     const mm2 = useMM2Instance(data);
-    const [dom, setDom] = useState(() => mm2.getDom());
+    const [dom, setDom] = useState(null);
+    const updateDom = useCallback(async () => {
+      const d = await mm2.getDom();
+      if (d && !isElement(d)) {
+        throw new Error(`Return value of getDom() is not an HTML element: ${d}`);
+      }
+      setDom(d);
+    }, [mm2]);
 
     //const ref = useRef(null);
     // Set data, initialize, and start on mount
@@ -28,12 +36,12 @@ const makeCompat = (MM2, name, globalConfig) => {
           `Module ${name} requires MM version ${mm2.requiresVersion}, running ${globalConfig.version}`
         );
       }
-      mm2.loaded(() => null); // no longer required to call callback
+      mm2.loaded && mm2.loaded(() => null); // no longer required to call callback
       mm2.init();
-      mm2.getDom().then(d => setDom(d));
+      updateDom();
     }, [mm2]); // eslint-disable-line react-hooks/exhaustive-deps
     useSubscribe("ALL_MODULES_LOADED", () => mm2.start());
-    useSubscribe("UPDATE_DOM", payload => mm2.getDom().then(d => setDom(d)), identifier);
+    useSubscribe("UPDATE_DOM", () => updateDom, identifier);
     useEffect(() => {
       mm2.hidden = hidden;
       mm2.setData(data); // FIXME: inefficient

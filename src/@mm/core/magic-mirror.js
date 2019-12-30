@@ -15,6 +15,8 @@ const MMReducer = (state, { type, ...payload }) => {
   switch (type) {
     case 'HIDE_MODULE':
       return hideModule(true, state, payload);
+    case 'SHOW_MODULE':
+      return hideModule(false, state, payload);
     default:
       return state;
   }
