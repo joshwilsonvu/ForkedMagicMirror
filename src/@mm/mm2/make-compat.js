@@ -5,18 +5,21 @@ import { useSubscribe } from "@mm/core/use-subscribe";
 import { isElement } from "./isDom";
 
 const makeCompat = (MM2, name, globalConfig) => {
-  const useMM2Instance = (data) => useState(() => {
+  // access an instance of the MM2 class
+  const useMM2Instance = (props) => useState(() => {
+    const { identifier, classes, header, position, config } = props;
+    const data = { identifier, name, classes, header, position, config };
     const mm2 = new MM2();
     mm2.setData(data);
     return mm2;
   })[0];
+
   // Create a React component wrapping the given subclass
   const Compat = forwardRef((props, ref) => {
     const { identifier, hidden, classes, header, position, config } = props;
-    const data = { identifier, name, classes, header, position, config };
 
     const MM = useMM2(identifier);
-    const mm2 = useMM2Instance(data);
+    const mm2 = useMM2Instance(props);
     const [dom, setDom] = useState(null);
     const updateDom = useCallback(async () => {
       const d = await mm2.getDom();
@@ -44,13 +47,12 @@ const makeCompat = (MM2, name, globalConfig) => {
     useSubscribe("UPDATE_DOM", () => updateDom, identifier);
     useEffect(() => {
       mm2.hidden = hidden;
-      mm2.setData(data); // FIXME: inefficient
     });
 
     return (
       <div
         id={identifier}
-        className={data.classes}
+        className={classes}
       >
         {typeof header !== "undefined" && header !== "" && (
           <header className="module-header" dangerouslySetInnerHTML={header}/>

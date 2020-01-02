@@ -47,7 +47,8 @@ export default class Module {
   name = '';
 
   // Called when the module is instantiated (compat).
-  init() {}
+  init() {
+  }
 
   // Called when the module is started (compat).
   start() {
@@ -187,22 +188,21 @@ export default class Module {
     cb();
     //Promise.all(dependencies.map(dep => Loader.loadFile(dep, this, () => {}))).then(cb);
   }
+}
 
-  // Register a subclass
-  static register(name, module) {
-    console.log(name, module);
-    // Create a subclass of this class with the properties of subclass
-    function MM2() {
-      return new (Module.bind(this))();
-    }
-    MM2.prototype = Object.create(Module);
-    Object.assign(MM2.prototype, module);
-    MM2.prototype.constructor = MM2;
-    // this._setDefinition is added by index.js
-    if (this._setDefinition) {
-      this._setDefinition(MM2)
-    } else {
-      throw new Error("Expected truthy 'this._setDefinition'");
-    }
+// Register a subclass
+Module.register = function(name, module) {
+  console.log(name, module);
+  // Create a subclass of this class with the properties of subclass
+  function MM2() {
+    return new (Module.bind(this))();
+  }
+  MM2.prototype = Object.assign(Object.create(Module), module);
+  MM2.prototype.constructor = MM2;
+  // this._setDefinition is added by index.js
+  if (Module._setDefinition) {
+    Module._setDefinition(MM2)
+  } else {
+    throw new Error("Expected 'Module._setDefinition'");
   }
 }
