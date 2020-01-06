@@ -15,7 +15,7 @@ const makeCompat = (MM2, name, globalConfig) => {
   })[0];
 
   // Create a React component wrapping the given subclass
-  const Compat = forwardRef((props, ref) => {
+  function Compat(props) {
     const { identifier, hidden, classes, header, position, config } = props;
 
     const MM = useMM2(identifier);
@@ -65,7 +65,7 @@ const makeCompat = (MM2, name, globalConfig) => {
         </ModuleGuard>
       </div>
     );
-  });
+  }
 
   // Assign correct .name property to make development easier
   Object.defineProperty(Compat, "name", {
@@ -76,6 +76,7 @@ const makeCompat = (MM2, name, globalConfig) => {
   return Compat;
 };
 
+
 const useLayoutPrevious = value => {
   const ref = useRef(null);
   useLayoutEffect(() => {
@@ -85,7 +86,7 @@ const useLayoutPrevious = value => {
 };
 
 // An escape hatch from React. Pass the dom prop to imperatively add HTMLElements.
-function Escape({ dom, ...rest }) {
+function Escape({ dom, children, ...rest }) {
   const div = useRef(null);
   const oldDom = useLayoutPrevious(dom);
   // add/replace/remove dom content

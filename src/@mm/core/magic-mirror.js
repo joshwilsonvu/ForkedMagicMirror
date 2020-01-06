@@ -77,8 +77,9 @@ const WrapModule = ({ module }) => {
 };
 
 const WrapGroup = modules => (
-  <FaderGroup className="container">{modules.map(module => <WrapModule key={module.identifier}
-                                                                            module={module}/>)}</FaderGroup>
+  <FaderGroup className="container">{modules.map(module =>
+    <WrapModule key={module.identifier} module={module}/>)}
+  </FaderGroup>
 );
 
 function MMLayout() {
