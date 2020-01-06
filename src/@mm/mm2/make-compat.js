@@ -7,8 +7,8 @@ import { isElement } from "./isDom";
 const makeCompat = (MM2, name, globalConfig) => {
   // access an instance of the MM2 class
   const useMM2Instance = (props) => useState(() => {
-    const { identifier, classes, header, position, config } = props;
-    const data = { identifier, name, classes, header, position, config };
+    const { identifier, classes, header, position, config, path } = props;
+    const data = { identifier, name, classes, header, position, config, path };
     const mm2 = new MM2();
     mm2.setData(data);
     return mm2;

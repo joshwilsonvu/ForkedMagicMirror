@@ -38,17 +38,18 @@ const MMInit = ({ children, config }) => {
     modules: config.modules
       .filter(({ disabled }) => !disabled)
       .map(m => {
-        if (typeof m._import !== 'function') {
+        if (typeof m._import !== 'function' /*|| typeof m._path !== 'string'*/) {
           throw new Error(`Babel loader not working for ${m.module}.`);
         }
         return m;
       })
-      .map(({ module, position, classes = '', header = '', config = {}, _import }) => {
+      .map(({ module, position, classes = '', header = '', config = {}, _import, _path }) => {
         return {
           hidden: false,
           speed: 1000,
           identifier: `m${nanoid(10)}`, // unique identifier for each module
           Component: lazy(_import), // _import is () => import("module"), done in loader to be statically analyzable
+          path: _path,
           name: module,
           position,
           classes,
@@ -62,9 +63,9 @@ const MMInit = ({ children, config }) => {
 const useModules = () => useSelector(state => state.modules);
 
 const WrapModule = ({ module }) => {
-  const { Component, hidden, speed, identifier, name, classes, header, config } = module;
+  const { Component, hidden, speed, identifier, name, classes, header, config, path } = module;
   let timeout = typeof speed === 'number' ? speed : 1000;
-  const props = { identifier, classNames: classes, header, ...config };
+  const props = { name, path, identifier, classNames: classes, header, ...config };
   // add CSSTransition here to apply key and make it a direct child of TransitionGroup
   return (
     <FadeTransition speed={speed} pose={hidden && "hidden"}>
