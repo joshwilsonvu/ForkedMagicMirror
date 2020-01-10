@@ -4,8 +4,7 @@
   "description": "The open source modular smart mirror platform.",
   "main": "js/electron.js",
   "scripts": {
-    "start": "mm-scripts start",
-    "lint": "eslint"
+    "start": "mm-scripts start"
   },
   "repository": {
     "type": "git",

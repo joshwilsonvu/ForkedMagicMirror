@@ -38,7 +38,7 @@ const MMInit = ({ children, config }) => {
     modules: config.modules
       .filter(({ disabled }) => !disabled)
       .map(m => {
-        if (typeof m._import !== 'function' /*|| typeof m._path !== 'string'*/) {
+        if (typeof m._import !== 'function' || typeof m._path !== 'string') {
           throw new Error(`Babel loader not working for ${m.module}.`);
         }
         return m;
