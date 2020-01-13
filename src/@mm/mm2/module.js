@@ -3,7 +3,7 @@
  * existing MagicMirror plugins. These plugins will subclass this class,
  * and the resulting instance will be wrapped in a React component.
  */
-import { Environment, WebLoader } from 'nunjucks';
+import io from 'socket.io-client';
 import path from 'path';
 
 const nunjucksMap = new WeakMap();
@@ -12,7 +12,7 @@ const getNunjucksEnvironment = module => {
   if (env) {
     return env;
   }
-  env = new Environment(new WebLoader(module.file(''), { async: true }), {
+  env = new window.nunjucks.Environment(new window.nunjucks.WebLoader(module.file(''), { async: true }), {
     trimBlocks: true,
     lstripBlocks: true,
   });
@@ -22,15 +22,14 @@ const getNunjucksEnvironment = module => {
 };
 
 const socketMap = new WeakMap();
-/*const getSocket = module => {
+const getSocket = module => {
   let socket = socketMap.get(module);
   if (!socket) {
     socket = new MMSocket(module.name);
-    socket.setNotificationCallback((n, p) => module.socketNotificationReceived(n, p));
     socketMap.set(module, socket);
   }
   return socket;
-};*/
+};
 
 export default class Module {
 
@@ -149,18 +148,9 @@ export default class Module {
     console.log(`${this.name} is resumed.`);
   }
 
-  setData(data) {
-    this.data = data;
-    this.name = data.name || '';
-    this.identifier = data.identifier || '';
-    this.hidden = false;
-    this.setConfig(data.config || {});
-  }
-
-  // Set the module config and combine it with the module defaults.
-  setConfig(config) {
-    this.config = { ...this.defaults, ...config };
-  }
+  // No-ops, so app doesn't crash if called
+  setData() { /* compat */}
+  setConfig(config) { /* compat */}
 
   // Returns a socket object. If it doesn't exist, it's created.
   // It also registers the notification callback.
@@ -170,35 +160,33 @@ export default class Module {
 
   // Retrieve the path to a module file.
   file(file) {
-    return path.join(this.data.path, file);
+    return path.normalize(path.join(this.data.path, file));
   }
 
-  // Load all required stylesheets by requesting the MM object to load the files.
-  loadStyles(cb) {
-    this.loadDependencies('getStyles', cb);
-  }
+  // // Load all required stylesheets by requesting the MM object to load the files.
+  // loadStyles(cb) {
+  //   this.loadDependencies('getStyles', cb);
+  // }
 
-  // Load all required stylesheets by requesting the MM object to load the files.
-  loadScripts(cb) {
-    this.loadDependencies('getScripts', cb);
-  }
+  // // Load all required stylesheets by requesting the MM object to load the files.
+  // loadScripts(cb) {
+  //   this.loadDependencies('getScripts', cb);
+  // }
 
-  loadDependencies(funcName, cb) {
-    let dependencies = this[funcName]();
-    cb();
-    //Promise.all(dependencies.map(dep => Loader.loadFile(dep, this, () => {}))).then(cb);
-  }
+  // loadDependencies(funcName, cb) {
+  //   let dependencies = this[funcName]();
+  //   cb();
+  //   //Promise.all(dependencies.map(dep => Loader.loadFile(dep, this, () => {}))).then(cb);
+  // }
 }
 
 // Register a subclass
 Module.register = function(name, module) {
   console.log(name, module);
   // Create a subclass of this class with the properties of subclass
-  function MM2() {
-    return new (Module.bind(this))();
-  }
-  MM2.prototype = Object.assign(Object.create(Module), module);
-  MM2.prototype.constructor = MM2;
+  class MM2 extends Module {}
+  Object.assign(MM2.prototype, module);
+
   // this._setDefinition is added by index.js
   if (Module._setDefinition) {
     Module._setDefinition(MM2)
@@ -206,3 +194,40 @@ Module.register = function(name, module) {
     throw new Error("Expected 'Module._setDefinition'");
   }
 }
+
+class MMSocket {
+  constructor(moduleName) {
+    if (typeof moduleName !== "string") {
+      throw new Error("Please set the module name for the MMSocket.");
+    }
+
+    this.socket = io("/" + moduleName);
+    this.notificationCallback = function() {};
+
+    let onevent = this.socket.onevent;
+    this.socket.onevent = function(packet) {
+      let args = packet.data || [];
+      onevent.call(this, packet); // original call
+      packet.data = ["*"].concat(args);
+      onevent.call(this, packet); // additional call to catch-all
+    };
+
+    // register catch all.
+    this.socket.on("*", function(notification, payload) {
+      if (notification !== "*") {
+        this.notificationCallback(notification, payload);
+      }
+    });
+  }
+
+	setNotificationCallback(callback) {
+		this.notificationCallback = callback;
+	}
+
+	sendNotification(notification, payload) {
+		if (typeof payload === "undefined") {
+			payload = {};
+		}
+		this.socket.emit(notification, payload);
+	}
+};

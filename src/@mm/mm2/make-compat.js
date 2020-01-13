@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, useLayoutEffect, useCallback, forwardRef } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import useConstant from "use-constant";
 import { useMM2, ModuleGuard } from "@mm/core";
 import semver from "semver";
 import { useSubscribe } from "@mm/core/use-subscribe";
@@ -6,20 +7,36 @@ import { isElement } from "./isDom";
 
 const makeCompat = (MM2, name, globalConfig) => {
   // access an instance of the MM2 class
-  const useMM2Instance = (props) => useState(() => {
-    const { identifier, classes, header, position, config, path } = props;
-    const data = { identifier, name, classes, header, position, config, path };
-    const mm2 = new MM2();
-    mm2.setData(data);
-    return mm2;
-  })[0];
+  const useMM2Instance = ({ hidden, identifier, classes, header, position, config, path, file }, MM) => {
+    // runs only once
+    return useConstant(() => {
+      const mm2 = new MM2();
+      // Set the module data and combine config with the module defaults.
+      Object.assign(mm2, { 
+        hidden, 
+        identifier: identifier || '', 
+        name: name || '', 
+        config: { ...mm2.defaults, ...config }, 
+        data: { classes, file, path, header, position },
+        MM
+      });
+      console.log(mm2.data);
+      if (mm2.requiresVersion && globalConfig.version && !semver.gt(mm2.requiresVersion, globalConfig.version)) {
+        throw new Error(
+          `Module ${name} requires MM version ${mm2.requiresVersion}, running ${globalConfig.version}`
+        );
+      }
+      return mm2;
+    });
+  };
 
   // Create a React component wrapping the given subclass
   function Compat(props) {
-    const { identifier, hidden, classes, header, position, config } = props;
+    const { identifier, hidden, classes, header } = props;
 
     const MM = useMM2(identifier);
-    const mm2 = useMM2Instance(props);
+    const mm2 = useMM2Instance(props, MM);
+
     const [dom, setDom] = useState(null);
     const updateDom = useCallback(async () => {
       const d = await mm2.getDom();
@@ -29,20 +46,12 @@ const makeCompat = (MM2, name, globalConfig) => {
       setDom(d);
     }, [mm2]);
 
-    //const ref = useRef(null);
     // Set data, initialize, and start on mount
     useEffect(() => {
-      // run this effect only once, to initialize everything
-      mm2.MM = MM;
-      if (mm2.requiresVersion && globalConfig.version && !semver.gt(mm2.requiresVersion, globalConfig.version)) {
-        throw new Error(
-          `Module ${name} requires MM version ${mm2.requiresVersion}, running ${globalConfig.version}`
-        );
-      }
       mm2.loaded && mm2.loaded(() => null); // no longer required to call callback
       mm2.init();
       updateDom();
-    }, [mm2]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [mm2, updateDom]);
     useSubscribe("ALL_MODULES_LOADED", () => mm2.start());
     useSubscribe("UPDATE_DOM", () => updateDom, identifier);
     useEffect(() => {
@@ -55,7 +64,7 @@ const makeCompat = (MM2, name, globalConfig) => {
         className={classes}
       >
         {typeof header !== "undefined" && header !== "" && (
-          <header className="module-header" dangerouslySetInnerHTML={header}/>
+          <header className="module-header" dangerouslySetInnerHTML={header} />
         )}
         <ModuleGuard name={name}>
           <Escape
@@ -86,14 +95,14 @@ const useLayoutPrevious = value => {
 };
 
 // An escape hatch from React. Pass the dom prop to imperatively add HTMLElements.
-function Escape({ dom, children, ...rest }) {
+function Escape({ dom, children }) {
   const div = useRef(null);
   const oldDom = useLayoutPrevious(dom);
   // add/replace/remove dom content
   useLayoutEffect(() => replace(div.current, oldDom, dom), [dom, oldDom]);
   // cleanup on unmount
   useLayoutEffect(() => () => replace(div.current, div.current.firstChild, null), []);
-  return (<div ref={div} {...rest}/>);
+  return (<div ref={div} />);
 }
 
 function replace(parent, oldDom, newDom) {

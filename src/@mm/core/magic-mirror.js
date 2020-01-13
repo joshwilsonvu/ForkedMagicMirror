@@ -2,16 +2,15 @@
  * This component implements the MagicMirror
  */
 
-import React, { useState, lazy, Suspense, memo } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { createStore } from 'redux';
-import { Provider, useSelector } from 'react-redux';
+import { Provider as ReduxProvider, useSelector } from 'react-redux';
 import nanoid from 'nanoid';
-import { Fader, FaderGroup, FadeTransition } from './fader';
+import path from 'path';
 import { Provider as NotificationProvider } from './use-subscribe';
-import getRegions from './get-regions';
+import useConstant from 'use-constant';
 
-
-const MMReducer = (state, { type, ...payload }) => {
+function MMReducer(state, { type, ...payload }) {
   switch (type) {
     case 'HIDE_MODULE':
       return hideModule(true, state, payload);
@@ -23,16 +22,22 @@ const MMReducer = (state, { type, ...payload }) => {
 };
 
 function hideModule(hidden, state, payload) {
-  const { identifier, speed, cb, options } = payload;
+  const { identifier, speed } = payload;
   return {
     ...state,
     modules: state.modules.map(m => m.identifier === identifier ? { ...m, hidden, speed } : m),
   };
 }
 
-const MMInit = ({ children, config }) => {
-  if (children) {
 
+function MMInit({ children, config }) {
+  if (children) {
+    return {
+      modules: React.Children.map(child => ({
+        hidden: false,
+
+      }))
+    }
   }
   return {
     modules: config.modules
@@ -48,8 +53,9 @@ const MMInit = ({ children, config }) => {
           hidden: false,
           speed: 1000,
           identifier: `m${nanoid(10)}`, // unique identifier for each module
-          Component: lazy(_import), // _import is () => import("module"), done in loader to be statically analyzable
-          path: _path,
+          Component: _import && lazy(_import), // _import is () => import("module"), done in loader to be statically analyzable
+          path: _path && path.dirname(_path),
+          file: _path && path.basename(_path),
           name: module,
           position,
           classes,
@@ -63,24 +69,26 @@ const MMInit = ({ children, config }) => {
 const useModules = () => useSelector(state => state.modules);
 
 const WrapModule = ({ module }) => {
-  const { Component, hidden, speed, identifier, name, classes, header, config, path } = module;
+  const { Component, hidden, speed, identifier, name, classes, header, config, path, file } = module;
   let timeout = typeof speed === 'number' ? speed : 1000;
-  const props = { name, path, identifier, classNames: classes, header, ...config };
+  const props = { name, path, file, identifier, classNames: classes, header, config, hidden };
   // add CSSTransition here to apply key and make it a direct child of TransitionGroup
   return (
-    <FadeTransition speed={speed} pose={hidden && "hidden"}>
+    /*<FadeTransition speed={speed} pose={hidden && "hidden"}>*/
       <Suspense fallback={<div>...</div>}>
         <Component {...props} duration={timeout}/>
       </Suspense>
-    </FadeTransition>
+    /*</FadeTransition>*/
   );
 };
 
 const WrapGroup = modules => (
-  <FaderGroup className="container">{modules.map(module =>
-    <WrapModule key={module.identifier} module={module}/>)}
-  </FaderGroup>
-);
+/*   <FaderGroup className="container">
+ */    modules.map(module =>
+  <WrapModule key={module.identifier} module={module} />
+)
+/*   </FaderGroup>
+ */);
 
 function MMLayout() {
   const modules = useModules();
@@ -135,15 +143,41 @@ function MMLayout() {
   );
 }
 
-function MagicMirror({ m, children, config }) {
+const defaultRegions = [
+  'none',
+  'top_bar',
+  'top_left',
+  'top_center',
+  'top_right',
+  'upper_third',
+  'middle_center',
+  'lower_third',
+  'bottom_left',
+  'bottom_center',
+  'bottom_right',
+  'bottom_bar',
+  'fullscreen_above',
+  'fullscreen_below',
+];
+
+function getRegions(modules) {
+  // Divide modules into the various regions by their .position property
+  const regions = defaultRegions.reduce((regions, region) => {
+    regions[region] = modules.filter(module => !module.disabled && (module.position || 'none') === region /*&& React.isValidElement(module.Component)*/);
+    return regions;
+  }, {});
+  return regions;
+}
+
+function MagicMirror({ children, config }) {
   // config is only initial arg, changing props doesn't do anything
-  const store = useState(() => createStore(MMReducer, MMInit({ children, config })))[0];
+  const store = useConstant(() => createStore(MMReducer, MMInit({ children, config })));
   return (
-    <Provider store={store}>
+    <ReduxProvider store={store}>
       <NotificationProvider>
         <MMLayout/>
       </NotificationProvider>
-    </Provider>
+    </ReduxProvider>
   );
 }
 

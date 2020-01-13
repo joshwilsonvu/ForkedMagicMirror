@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, useContext, useCallback, useRef } from 'react';
+import React, { createContext, useEffect, useContext, useCallback, useRef } from 'react';
+import useConstant from 'use-constant';
 import mitt from 'mitt';
 
 const PubSubContext = createContext(null);
@@ -8,9 +9,11 @@ const destinationKey = Symbol("destination");
 // Creates Provider, useSubscribe, and usePublish that use the given context. Useful for separate "rooms".
 export const createPubSub = Context => {
   function Provider(props) {
-    const emitter = useState(mitt)[0];
-    return <Context.Provider value={emitter} {...props} />;
+    const emitter = useConstant(mitt);
+    return <Context.Provider {...props} value={emitter} />;
   }
+
+  function useEmitter() { return useContext(Context); }
 
   /*
    * To subscribe to a notification, call this hook with the name of the notification
@@ -28,7 +31,7 @@ export const createPubSub = Context => {
    *     publish("UPDATE", {}, "foo");
    */
   function useSubscribe(event, subscriber, identity) {
-    const emitter = useContext(Context);
+    const emitter = useEmitter();
     const subscriberRef = useRef(null);
     subscriberRef.current = subscriber;
     useEffect(() => {
@@ -62,7 +65,7 @@ export const createPubSub = Context => {
    *     publish("FETCHED", payload, destination) // "foo"
    */
   function usePublish() {
-    const emitter = useContext(Context);
+    const emitter = useEmitter();
     // return value of hook acts as emit function
     return useCallback(
       (event, payload, destination) => {
