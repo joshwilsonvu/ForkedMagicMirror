@@ -9,15 +9,14 @@ import path from 'path';
 const nunjucksMap = new WeakMap();
 const getNunjucksEnvironment = module => {
   let env = nunjucksMap.get(module);
-  if (env) {
-    return env;
+  if (!env) {
+    env = new window.nunjucks.Environment(new window.nunjucks.WebLoader(module.file(''), { async: true }), {
+      trimBlocks: true,
+      lstripBlocks: true,
+    });
+    env.addFilter('translate', str => module.translate(str));
+    nunjucksMap.set(module, env);
   }
-  env = new window.nunjucks.Environment(new window.nunjucks.WebLoader(module.file(''), { async: true }), {
-    trimBlocks: true,
-    lstripBlocks: true,
-  });
-  env.addFilter('translate', str => module.translate(str));
-  nunjucksMap.set(module, env);
   return env;
 };
 

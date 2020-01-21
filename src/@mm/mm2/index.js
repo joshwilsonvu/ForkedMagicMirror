@@ -11,7 +11,7 @@ export default (js, name, config) => {
   const globals = {
     Module,
     config,
-    moment: (...args) => window.moment(...args),
+    moment: window.moment,
     suncalc: window.suncalc
   };
   // eslint-disable-next-line no-new-func

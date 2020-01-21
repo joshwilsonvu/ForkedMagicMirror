@@ -29,14 +29,6 @@ export const useMM = ({ includeDeprecated }) => {
 
 export const useMM2 = () => useMM({includeDeprecated: true});
 
-/*const useCompat = () => {
-  const { dispatch } = useContext(MMContext);
-  const [identifier] = useState(() => nanoid(10)); // constant
-  const [mm2] = useState(() => new MM2()); // constant
-  const [dom, setDom] = useState(null);
-  const [speed, setSpeed] = useState(1000);
-};*/
-
 function setSelectionMethodsForModules(modules) {
   return Object.assign([...modules], selectionMethods);
 }
