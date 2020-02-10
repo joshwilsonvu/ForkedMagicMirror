@@ -2,9 +2,12 @@
   "name": "magicmirror",
   "version": "2.10.0-develop",
   "description": "The open source modular smart mirror platform.",
-  "main": "js/electron.js",
+  "main": "build/server.js",
   "scripts": {
-    "start": "mm-scripts start"
+    "start": "razzle start",
+    "build": "razzle build",
+    "test": "razzle test --env=jsdom",
+    "start:prod": "NODE_ENV=production node build/server.js"
   },
   "repository": {
     "type": "git",
@@ -28,13 +31,14 @@
     "url": "https://github.com/joshwilsonvu/MagicMirror/issues"
   },
   "homepage": "https://magicmirror.builders",
-  "devDependencies": {},
+  "devDependencies": {
+    "razzle": "^3.0.0"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0",
     "@types/react": "^16.9.17",
-    "immutable": "^4.0.0-rc.12",
+    "electron": "^8.0.0",
     "mitt": "^1.2.0",
-    "mm-scripts": "*",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
     "nanoid": "^2.1.7",
