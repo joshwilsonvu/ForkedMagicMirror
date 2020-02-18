@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
-import MagicMirror from '@mm/core/magic-mirror';
+import {MagicMirror} from './@mm/core';
 import config from './config/config';
 
 // make CSS globally available

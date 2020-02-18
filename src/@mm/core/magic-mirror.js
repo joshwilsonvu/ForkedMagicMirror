@@ -7,7 +7,7 @@ import { createStore } from 'redux';
 import { Provider as ReduxProvider, useSelector } from 'react-redux';
 import nanoid from 'nanoid';
 import path from 'path';
-import { Provider as NotificationProvider } from './use-subscribe';
+import { Provider as NotificationProvider } from '../../../../mm/packages/hooks/lib/use-subscribe';
 import useConstant from 'use-constant';
 
 function MMReducer(state, { type, ...payload }) {

@@ -86,3 +86,4 @@ Temporary Items
 *.bak
 
 !/.old/tests/node_modules/**/*
+.cache
