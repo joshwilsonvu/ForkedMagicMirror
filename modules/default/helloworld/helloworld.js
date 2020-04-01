@@ -1,24 +1,6 @@
-/* global Module */
+import React from "react";
 
-/* Magic Mirror
- * Module: HelloWorld
- *
- * By Michael Teeuw http://michaelteeuw.nl
- * MIT Licensed.
- */
-
-Module.register("helloworld",{
-
-	// Default module config.
-	defaults: {
-		text: "Hello World!"
-	},
-
-	getTemplate: function () {
-		return "helloworld.njk";
-	},
-
-	getTemplateData: function () {
-		return this.config;
-	}
-});
+// The most basic default MagicMirror module, ported to React.
+export default ({text}) => (
+  <div>{text}</div>
+);

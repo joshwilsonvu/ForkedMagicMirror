@@ -10,10 +10,9 @@ lib-cov
 coverage
 .grunt
 .lock-wscript
-build/Release
-/node_modules/**/*
-fonts/node_modules/**/*
-vendor/node_modules/**/*
+build
+dist
+node_modules
 jspm_modules
 .npm
 .node_repl_history
@@ -62,14 +61,16 @@ Temporary Items
 # Various Magic Mirror ignoramuses and anti-ignoramuses.
 
 # Don't ignore the node_helper core module.
-!/modules/node_helper
-!/modules/node_helper/**
+!/src/modules/node_helper
+!/src/modules/node_helper/**
 
 # Ignore all modules except the default modules.
-/modules/**
-!/modules/default
-!/modules/default/**
-!/modules/README.md**
+/src/modules/**
+!/src/modules/default
+!/src/modules/default/**
+!/src/modules/legacy
+!/src/modules/legacy/**
+!/src/modules/README.md**
 
 # Ignore changes to the custom css files.
 /css/custom.css
@@ -84,4 +85,5 @@ Temporary Items
 *.rej
 *.bak
 
-!/tests/node_modules/**/*
+!/.old/tests/node_modules/**/*
+.cache

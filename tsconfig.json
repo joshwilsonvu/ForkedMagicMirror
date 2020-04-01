@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react"
+  },
+  "include": [
+    "src", "../mm/packages/babel-plugin-transform-config", "../mm/packages/babel-plugin-transform-mm2", "../mm/packages/hooks/lib/use-subscribe.js", "../mm/packages/hooks/lib/use-mm.js", "../mm/packages/mm2", "config/config.js", "modules/count", "modules/default", "modules/text"
+  ]
+}

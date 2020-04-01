@@ -1,55 +1,30 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title>MagicMirror²</title>
-	<meta name="google" content="notranslate" />
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<html lang="en">
+  <head>
+    <!-- These fields should not be modified unless there is a good reason. -->
+    <meta charset="utf-8" />
+    <!-- <link rel="icon" href="/favicon.ico" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Magic Mirror created with a custom create-react-app"
+    />
+    <title>Magic Mirror</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script src="./client.js"></script>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
 
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="format-detection" content="telephone=no">
-	<meta name="mobile-web-app-capable" content="yes">
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
 
-	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<link rel="stylesheet" type="text/css" href="fonts/roboto.css">
-	<!-- custom.css is loaded by the loader.js to make sure it's loaded after the module css files. -->
-
-	<script type="text/javascript">
-		var version = "#VERSION#";
-	</script>
-</head>
-<body>
-	<div class="region fullscreen below"><div class="container"></div></div>
-	<div class="region top bar">
-		<div class="container"></div>
-		<div class="region top left"><div class="container"></div></div>
-		<div class="region top center"><div class="container"></div></div>
-		<div class="region top right"><div class="container"></div></div>
-	</div>
-	<div class="region upper third"><div class="container"></div></div>
-	<div class="region middle center"><div class="container"></div></div>
-	<div class="region lower third"><div class="container"><br/></div></div>
-	<div class="region bottom bar">
-		<div class="container"></div>
-		<div class="region bottom left"><div class="container"></div></div>
-		<div class="region bottom center"><div class="container"></div></div>
-		<div class="region bottom right"><div class="container"></div></div>
-	</div>
-	<div class="region fullscreen above"><div class="container"></div></div>
-	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="vendor/node_modules/nunjucks/browser/nunjucks.min.js"></script>
-	<script type="text/javascript" src="js/defaults.js"></script>
-	<script type="text/javascript" src="#CONFIG_FILE#"></script>
-	<script type="text/javascript" src="vendor/vendor.js"></script>
-	<script type="text/javascript" src="modules/default/defaultmodules.js"></script>
-	<script type="text/javascript" src="js/logger.js"></script>
-	<script type="text/javascript" src="translations/translations.js"></script>
-	<script type="text/javascript" src="js/translator.js"></script>
-	<script type="text/javascript" src="js/class.js"></script>
-	<script type="text/javascript" src="js/module.js"></script>
-	<script type="text/javascript" src="js/loader.js"></script>
-	<script type="text/javascript" src="js/socketclient.js"></script>
-	<script type="text/javascript" src="js/main.js"></script>
-</body>
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
 </html>
