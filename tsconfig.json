@@ -20,6 +20,6 @@
     "jsx": "react"
   },
   "include": [
-    "src", "../mm/packages/babel-plugin-transform-config", "../mm/packages/babel-plugin-transform-mm2", "../mm/packages/hooks/lib/use-subscribe.js", "../mm/packages/hooks/lib/use-mm.js", "../mm/packages/mm2"
+    "src", "../mm/packages/babel-plugin-transform-config", "../mm/packages/babel-plugin-transform-mm2", "../mm/packages/hooks/src/use-subscribe.js", "../mm/packages/hooks/src/use-mm.js", "../mm/packages/mm2", "modules", "config/config.js"
   ]
 }
